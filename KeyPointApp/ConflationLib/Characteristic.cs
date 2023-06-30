@@ -1,5 +1,4 @@
 ﻿using AlgorithmsLibrary;
-using DotSpatial.NTSExtension;
 using SupportLib;
 
 namespace ConflationLib

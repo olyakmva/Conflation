@@ -3,7 +3,6 @@ using DotSpatial.Data;
 using MainForm.Controls;
 using SupportLib;
 using ConflationLib;
-using System;
 
 
 namespace KeyPointApp
@@ -15,8 +14,11 @@ namespace KeyPointApp
         readonly GraphicsState _state = new();
         private List<AlgParamControl> _listCtrls;
         private readonly string _applicationPath;
-        int startX = 0, startY = 20, ctrlHeight = 140;
-        int afterBtnProcY = 370, layerCtrlHeight = 45;
+        private readonly int startX = 0;
+        private int startY = 20;
+        private readonly int ctrlHeight = 140;
+        private int afterBtnProcY = 370;
+        private readonly int layerCtrlHeight = 45;
         private TableLayoutPanel table;
 
         public MainForm()
@@ -33,14 +35,14 @@ namespace KeyPointApp
         }
         private void InitTable()
         {
-            table = new TableLayoutPanel()
+            table = new TableLayoutPanel
             {
                 RowCount = 1,
-                ColumnCount = 4
+                ColumnCount = 4,
+                Width = 250,
+                AutoSize = true,
+                CellBorderStyle = TableLayoutPanelCellBorderStyle.Single
             };
-            table.Width = 250;
-            table.AutoSize = true;
-            table.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
             table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20.0F));
             table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20.0F));
             table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20.0F));
@@ -164,7 +166,7 @@ namespace KeyPointApp
 
         private void BtnProcessClick(object sender, EventArgs e)
         {
-            List<MapData> mapDatas = new List<MapData>();
+            List<MapData> mapDatas = new();
             foreach (var ctrl in _listCtrls)
             {
                 if (!ctrl.IsChecked)
@@ -180,9 +182,9 @@ namespace KeyPointApp
                 _layers.Add(l);
                 var layerCtrl = new LayerControl(l)
                 {
-                    Location = new Point(startX, afterBtnProcY)
+                    Location = new Point(startX, afterBtnProcY),
+                    BackColor = Color.FromName(l.Color)
                 };
-                layerCtrl.BackColor = Color.FromName(l.Color);
                 layerCtrl.CheckedChanged += OnLayerVisibleChanged;
                 afterBtnProcY += layerCtrlHeight;
                 mainContainer.Panel1.Controls.Add(layerCtrl);             

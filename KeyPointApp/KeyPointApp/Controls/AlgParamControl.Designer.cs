@@ -139,7 +139,7 @@
             // AlgNameComboBox
             // 
             AlgNameComboBox.FormattingEnabled = true;
-            AlgNameComboBox.Items.AddRange(new object[] { "DouglasPeucker", "VisvWhyatt", "SleeveFit" });
+            AlgNameComboBox.Items.AddRange(new object[] { "SleeveFit", "DouglasPeucker", "VisvWhyatt" });
             AlgNameComboBox.Location = new Point(108, 31);
             AlgNameComboBox.Name = "AlgNameComboBox";
             AlgNameComboBox.Size = new Size(112, 28);

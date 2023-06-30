@@ -7,9 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AlgorithmsLibrary\AlgorithmsLibrary.csproj" />
     <ProjectReference Include="..\SupportLib\SupportLib.csproj" />
-    <ProjectReference Include="..\VectorLib\VectorLib.csproj" />
   </ItemGroup>
 
 </Project>

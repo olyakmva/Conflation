@@ -1,33 +1,23 @@
 ﻿using AlgorithmsLibrary;
-using System.IO;
 using SupportLib;
+using VectorLib;
 
 namespace ConflationLib
 {
-    public class SomeFeachure
-    {
-        public int MapObjId1 { get; set; }
-        public int MapObjId2 { get; set; }
-        public int KeyPointCount { get; set; }
-
-    }
-
     public class FloatCharacteristics
     {
         private readonly MapData _mapData1;
         private readonly MapData _mapData2;
         private double _lengthBetweenPoints;
-        public List<SomeFeachure> SomeFeachures { get; set; }
-        const int PointRange = 2;
-        const double AngleValue = 200;
-        const double DistanceValue =0.5 ;
-
+        const int PointRange = 2;   
+        public Dictionary<int,List<PointVectorRelation>> map1Vectors = new Dictionary<int,List<PointVectorRelation>>();
+        public Dictionary<int, List<PointVectorRelation>> map2Vectors = new Dictionary<int, List<PointVectorRelation>>();
+        public List<KeyPoint> keyPoints = new List<KeyPoint>();
         public FloatCharacteristics(MapData mapA, MapData map2, double length)
         {
             _mapData1 = mapA;
             _mapData2 = map2;
             _lengthBetweenPoints = length;
-            SomeFeachures = new List<SomeFeachure>();
             Run();
         }
         private void Run()
@@ -35,57 +25,93 @@ namespace ConflationLib
             var sw = new StreamWriter("result.txt");
             foreach (var obj1 in _mapData1.MapObjDictionary)
             {
-                
                 var points1 = obj1.Value;
+                var list = GetVectors(points1);
                
-                for (int q = 0; q < points1.Count; q++)
+                var pointVectorList = new List<PointVectorRelation>();
+                int i = 1;
+                foreach(var vector in list)
                 {
                     sw.Write(obj1.Key.ToString() + ";");
-                    var ch= GetCharacteristic(q, points1);
-                    sw.Write(points1[q] + ";");
-                    sw.WriteLine(ch);
+                    sw.Write(points1[i] + ";");
+                    sw.WriteLine(vector.ToString());
+                    pointVectorList.Add(new PointVectorRelation { Vector = vector, Point = points1[i] });
+                    i++;
                 }
+                map1Vectors.Add(obj1.Key, pointVectorList);
             }
                 foreach (var obj2 in _mapData2.MapObjDictionary)
                 {
                     var points2 = obj2.Value;
-                   
-                    for (var i = 0; i < points2.Count; i++)
+                    var list = GetVectors(points2);
+                    var pointVectorList = new List<PointVectorRelation>();
+                                  
+                    int i = 1;
+                    foreach (var vector in list)
                     {
                         sw.Write(obj2.Key.ToString() + ";");
-                        var ch = GetCharacteristic(i, points2);
                         sw.Write(points2[i] + ";");
-                        sw.WriteLine(ch);
+                        sw.WriteLine(vector.ToString());
+                        pointVectorList.Add(new PointVectorRelation { Vector = vector, Point = points2[i] });
+                        i++;
                     }
-                }
-            sw.Close();              
-        }
-
-        private SomeFeachure GetSomeFeachure(List<MapPoint> points1, int i, List<MapPoint> points2, int j)
-        {
-           
-            var list1 = new List<Characteristic>();
-            var list2 = new List<Characteristic>();
-            for( int q=i; q < points1.Count; q++ )
-            {
-                list1.Add(GetCharacteristic(q, points1));
-            }
-            for(int r=j; r < points2.Count; r++ )
-            {
-                list2.Add(GetCharacteristic(r, points2));
+                    map2Vectors.Add(obj2.Key, pointVectorList);
             }
             
-            //int keyPointNumber = 0;
-            //foreach (var c1 in list1)
-            //    foreach(var c2 in list2)
-            //    {
-            //        var (dist, angle) = c1.DistanceTo(c2);
-            //        if (dist < DistanceValue && angle < AngleValue)
-            //            keyPointNumber++;
-            //    }
-            var sf = new SomeFeachure() { KeyPointCount = 0};
-            return sf;
+            foreach( var pair1 in map1Vectors)
+            {
+                var pointVectors1 = pair1.Value;
+                foreach (var pv in pointVectors1)
+                {
+                    foreach (var pair2 in map2Vectors)
+                    {
+                        var pointVectors2 = pair2.Value;
+                        foreach (var pv2 in pointVectors2)
+                        {
+                            if (pv.Point.DistanceToVertex(pv2.Point) > _lengthBetweenPoints)
+                                continue;
+                            if(pv.Vector.GetAngle(pv2.Vector)< 0.3)
+                            {
+                                var kp = new KeyPoint
+                                {
+                                    PointVector1 = pv,
+                                    PointVector2 = pv2,
+                                    AngleBetweenVectors = pv.Vector.GetAngle(pv2.Vector)
+                                };
+                                keyPoints.Add(kp);
+                                sw.WriteLine(kp);
+                            }
+
+                        }
+                    }
+                }
+            }            
+            sw.Close();     
         }
+        private List<Vector> GetVectors(List<MapPoint> points)
+        {
+            var list = new List<Vector>();
+            for(var i=1;i<PointRange;i++)
+            {
+                var ab = new Vector(points[i], points[i - 1]);
+                var bc = new Vector(points[i], points[i + 1]);
+                list.Add(ab + bc);
+            }
+            for(int i=PointRange; i<points.Count-PointRange; i++) 
+            { 
+                var ab = new Vector(points[i],points[i-PointRange]);
+                var bc = new Vector(points[i], points[i + PointRange]);
+                list.Add(ab + bc);
+            }
+            for (var i = points.Count - PointRange; i < points.Count -1; i++)
+            {
+                var ab = new Vector(points[i], points[i - 1]);
+                var bc = new Vector(points[i], points[i + 1]);
+                list.Add(ab + bc);
+            }
+            return list;
+        }
+      
 
         private Characteristic GetCharacteristic(int index, List<MapPoint> points)
         {
