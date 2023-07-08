@@ -23,6 +23,7 @@ namespace ConflationLib
         private void Run()
         {
             var sw = new StreamWriter("result.txt");
+            sw.WriteLine("Map1;point;vectorX; vectorY;Length;");
             foreach (var obj1 in _mapData1.MapObjDictionary)
             {
                 var points1 = obj1.Value;
@@ -40,7 +41,8 @@ namespace ConflationLib
                 }
                 map1Vectors.Add(obj1.Key, pointVectorList);
             }
-                foreach (var obj2 in _mapData2.MapObjDictionary)
+            sw.WriteLine("Map2;point;vectorX; vectorY;Length;");
+            foreach (var obj2 in _mapData2.MapObjDictionary)
                 {
                     var points2 = obj2.Value;
                     var list = GetVectors(points2);
@@ -57,7 +59,7 @@ namespace ConflationLib
                     }
                     map2Vectors.Add(obj2.Key, pointVectorList);
             }
-            
+            sw.WriteLine("PointMap1;vector1X;vector1Y;vector1Len;PointMap2;vector2X;vector2Y;vector2Len;Angle;Distance;");
             foreach( var pair1 in map1Vectors)
             {
                 var pointVectors1 = pair1.Value;
@@ -91,11 +93,14 @@ namespace ConflationLib
         private List<Vector> GetVectors(List<MapPoint> points)
         {
             var list = new List<Vector>();
-            for(var i=1;i<PointRange;i++)
+            if (points.Count > PointRange)
             {
-                var ab = new Vector(points[i], points[i - 1]);
-                var bc = new Vector(points[i], points[i + 1]);
-                list.Add(ab + bc);
+                for (var i = 1; i < PointRange; i++)
+                {
+                    var ab = new Vector(points[i], points[i - 1]);
+                    var bc = new Vector(points[i], points[i + 1]);
+                    list.Add(ab + bc);
+                }
             }
             for(int i=PointRange; i<points.Count-PointRange; i++) 
             { 
@@ -103,11 +108,14 @@ namespace ConflationLib
                 var bc = new Vector(points[i], points[i + PointRange]);
                 list.Add(ab + bc);
             }
-            for (var i = points.Count - PointRange; i < points.Count -1; i++)
+            if (points.Count - PointRange > 0)
             {
-                var ab = new Vector(points[i], points[i - 1]);
-                var bc = new Vector(points[i], points[i + 1]);
-                list.Add(ab + bc);
+                for (var i = points.Count - PointRange; i < points.Count - 1; i++)
+                {
+                    var ab = new Vector(points[i], points[i - 1]);
+                    var bc = new Vector(points[i], points[i + 1]);
+                    list.Add(ab + bc);
+                }
             }
             return list;
         }

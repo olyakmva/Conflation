@@ -20,7 +20,7 @@ namespace KeyPointApp
         private int afterBtnProcY = 370;
         private readonly int layerCtrlHeight = 45;
         private TableLayoutPanel table;
-
+        public List<KeyPoint> keyPoints;
         public MainForm()
         {
             InitializeComponent();
@@ -191,17 +191,9 @@ namespace KeyPointApp
             }
             if (mapDatas.Count > 1)
             {
-                var floatCharts = new FloatCharacteristics(mapDatas[0], mapDatas[1], 2000);
-                
-                //table.Location = new Point(0, afterBtnProcY);
-                //foreach (var obj in floatCharts.SomeFeachures)
-                //{
-                //    table.RowCount++;
-                //    int rowIndex = table.RowCount - 1;
-                //    table.Controls.Add(new Label() { Text = obj.MapObjId1.ToString() }, 0, rowIndex);
-                //    table.Controls.Add(new Label() { Text = obj.MapObjId2.ToString() }, 1, rowIndex);
-                //    table.Controls.Add(new Label() { Text = obj.KeyPointCount.ToString() }, 2, rowIndex);
-                //}
+                var floatCharts = new FloatCharacteristics(mapDatas[0], mapDatas[1], 1500);
+                keyPoints = floatCharts.keyPoints;
+               
             }
             mapPictureBox.Invalidate();
 
@@ -219,6 +211,31 @@ namespace KeyPointApp
                 var pen = new Pen(c, 1.75f);
                 Display(g, layer.MapData, pen);
             }
+            if(keyPoints!=null && keyPoints.Count>0)
+            {
+                var pen1 = new Pen(Color.Black, 2.0f);
+                var pen2 = new Pen(Color.Green, 2.0f);
+                foreach (var kpoint in keyPoints)
+                {
+                    var pt1 = _state.GetPoint(kpoint.PointVector1.Point, mapPictureBox.Height - 1);
+                    var pointEnd = new MapPoint
+                    {
+                        X = kpoint.PointVector1.Point.X + kpoint.PointVector1.Vector.x,
+                        Y = kpoint.PointVector1.Point.Y + kpoint.PointVector1.Vector.y
+                    };
+                    var pt2 = _state.GetPoint(pointEnd, mapPictureBox.Height - 1);
+                    g.DrawLine(pen1 ,pt1, pt2);
+                    pt1 = _state.GetPoint(kpoint.PointVector2.Point, mapPictureBox.Height - 1);
+                    pointEnd = new MapPoint
+                    {
+                        X = kpoint.PointVector2.Point.X + kpoint.PointVector2.Vector.x,
+                        Y = kpoint.PointVector2.Point.Y + kpoint.PointVector2.Vector.y
+                    };
+                    pt2 = _state.GetPoint(pointEnd, mapPictureBox.Height - 1);
+                    g.DrawLine(pen2, pt1, pt2);
+                }
+            }
+
             g.Flush();
         }
 
@@ -300,6 +317,7 @@ namespace KeyPointApp
             _listCtrls.Clear();
             _layers.Clear();
             _map.MapLayers.Clear();
+            keyPoints.Clear();
             _state.Scale = 2;
             Colors.Init();
             startY = 20;
