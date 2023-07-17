@@ -10,7 +10,7 @@ namespace MainForm.Controls
         public MapData mapData;
 
         public bool IsPointReduction
-        { 
+        {
             get => rBtnPointReduct.Checked;
             set => rBtnPointReduct.Checked = value;
         }
@@ -44,7 +44,7 @@ namespace MainForm.Controls
         public string AlgName
         {
             get { return AlgNameComboBox.Items[AlgNameComboBox.SelectedIndex].ToString(); }
-           //set { AlgNameComboBox.SelectedIndex = value; }
+            //set { AlgNameComboBox.SelectedIndex = value; }
 
         }
         public AlgParamControl()
@@ -71,7 +71,7 @@ namespace MainForm.Controls
             Tolerance = ctrl.Tolerance;
             Percent = ctrl.Percent;
             IsChecked = ctrl.IsChecked;
-            IsParametr= ctrl.IsParametr;
+            IsParametr = ctrl.IsParametr;
             IsPointReduction = ctrl.IsPointReduction;
 
         }

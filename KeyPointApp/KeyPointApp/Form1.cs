@@ -3,7 +3,7 @@ using DotSpatial.Data;
 using MainForm.Controls;
 using SupportLib;
 using ConflationLib;
-
+using KeyPointApp.Controls;
 
 namespace KeyPointApp
 {
@@ -15,12 +15,14 @@ namespace KeyPointApp
         private List<AlgParamControl> _listCtrls;
         private readonly string _applicationPath;
         private readonly int startX = 0;
-        private int startY = 20;
-        private readonly int ctrlHeight = 140;
-        private int afterBtnProcY = 370;
+        private int startY = 10;
+        private readonly int ctrlHeight = 165;
+        private int afterBtnProcY = 570;
         private readonly int layerCtrlHeight = 45;
         private TableLayoutPanel table;
         public List<KeyPoint> keyPoints;
+        public Dictionary<int, List<PointVectorRelation>> map2Vectors, map1Vectors;
+        ParamControl paramControl;
         public MainForm()
         {
             InitializeComponent();
@@ -31,7 +33,13 @@ namespace KeyPointApp
             mapPictureBox.MouseWheel += MapPictureBoxMouseWheel;
             _applicationPath = Environment.CurrentDirectory;
             Colors.Init();
-            InitTable();
+            paramControl = new ParamControl
+            {
+                Location = new Point(startX, 350)
+            };
+            mainContainer.Panel1 .Controls .Add(paramControl);
+            mainContainer.SplitterDistance  = paramControl.Width;
+            //InitTable();
         }
         private void InitTable()
         {
@@ -50,11 +58,11 @@ namespace KeyPointApp
             var lblId1 = new Label() { Text = "ID1" };
             var lblId2 = new Label() { Text = "ID2" };
             var lblDist = new Label() { Text = "KeyPNum" };
-           
+
             table.Controls.Add(lblId1, 0, 0);
             table.Controls.Add(lblId2, 1, 0);
             table.Controls.Add(lblDist, 2, 0);
-            
+
             table.Location = new Point(0, ctrlHeight * 5);
             mainContainer.Panel1.Controls.Add(table);
         }
@@ -96,7 +104,7 @@ namespace KeyPointApp
                 layerCtrl.CheckedChanged += OnLayerVisibleChanged;
                 afterBtnProcY += layerCtrlHeight;
                 mainContainer.Panel1.Controls.Add(layerCtrl);
-
+                mainContainer.SplitterDistance  = layerCtrl .Width;
                 foreach (var ctrl in _listCtrls)
                 {
                     foreach (var otherCtrl in _listCtrls)
@@ -187,13 +195,20 @@ namespace KeyPointApp
                 };
                 layerCtrl.CheckedChanged += OnLayerVisibleChanged;
                 afterBtnProcY += layerCtrlHeight;
-                mainContainer.Panel1.Controls.Add(layerCtrl);             
+                mainContainer.Panel1.Controls.Add(layerCtrl);
             }
             if (mapDatas.Count > 1)
             {
-                var floatCharts = new FloatCharacteristics(mapDatas[0], mapDatas[1], 1500);
+                double maxDistanceBetweenPoints = paramControl .Distance;
+                var floatCharts = new FloatCharacteristics(mapDatas[0], mapDatas[1], maxDistanceBetweenPoints );
+                floatCharts .PointRange = paramControl .PointRange;
+                floatCharts.AngleBetweenVectors = paramControl.Angle;
+                floatCharts.Run(paramControl.IsVector);
+                
+                map1Vectors = floatCharts.map1Vectors;
+                map2Vectors = floatCharts.map2Vectors;
                 keyPoints = floatCharts.keyPoints;
-               
+
             }
             mapPictureBox.Invalidate();
 
@@ -208,10 +223,15 @@ namespace KeyPointApp
                 if (!layer.Visible)
                     continue;
                 var c = Color.FromName(layer.Color);
-                var pen = new Pen(c, 1.75f);
-                Display(g, layer.MapData, pen);
+                var pen0 = new Pen(c, 1.75f);
+                Display(g, layer.MapData, pen0);
             }
-            if(keyPoints!=null && keyPoints.Count>0)
+            var pen = new Pen(Color.DarkRed, 2.0f);
+           // DisplayVectors(g, map1Vectors, pen);
+            pen = new Pen(Color.DarkKhaki, 2.0f);
+            //DisplayVectors(g, map2Vectors, pen);
+
+            if (keyPoints != null && keyPoints.Count > 0)
             {
                 var pen1 = new Pen(Color.Black, 2.0f);
                 var pen2 = new Pen(Color.Green, 2.0f);
@@ -224,7 +244,7 @@ namespace KeyPointApp
                         Y = kpoint.PointVector1.Point.Y + kpoint.PointVector1.Vector.y
                     };
                     var pt2 = _state.GetPoint(pointEnd, mapPictureBox.Height - 1);
-                    g.DrawLine(pen1 ,pt1, pt2);
+                    g.DrawLine(pen1, pt1, pt2);
                     pt1 = _state.GetPoint(kpoint.PointVector2.Point, mapPictureBox.Height - 1);
                     pointEnd = new MapPoint
                     {
@@ -237,6 +257,30 @@ namespace KeyPointApp
             }
 
             g.Flush();
+        }
+
+        private void DisplayVectors(Graphics g, Dictionary<int, List<PointVectorRelation>> map1Vectors, Pen pen)
+        {
+
+            if (map1Vectors != null && map1Vectors.Count > 0)
+            {
+
+                foreach (var pair in map1Vectors)
+                {
+                    var pointVectorList = pair.Value;
+                    foreach (var item in pointVectorList)
+                    {
+                        var pt1 = _state.GetPoint(item.Point, mapPictureBox.Height - 1);
+                        var pointEnd = new MapPoint
+                        {
+                            X = item.Point.X + item.Vector.x,
+                            Y = item.Point.Y + item.Vector.y
+                        };
+                        var pt2 = _state.GetPoint(pointEnd, mapPictureBox.Height - 1);
+                        g.DrawLine(pen, pt1, pt2);
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -317,16 +361,24 @@ namespace KeyPointApp
             _listCtrls.Clear();
             _layers.Clear();
             _map.MapLayers.Clear();
-            keyPoints.Clear();
+            keyPoints?.Clear();
+            map2Vectors?.Clear();
+            map1Vectors?.Clear();
             _state.Scale = 2;
             Colors.Init();
             startY = 20;
-            afterBtnProcY = 370;
-            table.Controls.Clear();
-            mainContainer.Panel1.Controls.Remove(table);
+            afterBtnProcY = 570;
+            //table.Controls.Clear();
+            // mainContainer.Panel1.Controls.Remove(table);
             mainContainer.Panel1.Controls.Clear();
             mainContainer.Panel1.Controls.Add(btnProcess);
-            InitTable();
+            paramControl = new ParamControl
+            {
+                Location = new Point(startX, 350)
+            };
+            mainContainer.Panel1.Controls.Add(paramControl);
+            mainContainer.SplitterDistance = paramControl.Width;
+            //InitTable();
             mapPictureBox.Invalidate();
         }
     }

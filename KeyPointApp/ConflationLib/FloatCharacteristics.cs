@@ -9,18 +9,19 @@ namespace ConflationLib
         private readonly MapData _mapData1;
         private readonly MapData _mapData2;
         private double _lengthBetweenPoints;
-        const int PointRange = 2;   
+        public  int PointRange { get; set; } = 2;   
         public Dictionary<int,List<PointVectorRelation>> map1Vectors = new Dictionary<int,List<PointVectorRelation>>();
         public Dictionary<int, List<PointVectorRelation>> map2Vectors = new Dictionary<int, List<PointVectorRelation>>();
         public List<KeyPoint> keyPoints = new List<KeyPoint>();
+        public double AngleBetweenVectors { get; set; } = 0.2;
         public FloatCharacteristics(MapData mapA, MapData map2, double length)
         {
             _mapData1 = mapA;
             _mapData2 = map2;
             _lengthBetweenPoints = length;
-            Run();
+            //Run();
         }
-        private void Run()
+        public void Run(bool byLengthAndVector)
         {
             var sw = new StreamWriter("result.txt");
             sw.WriteLine("Map1;point;vectorX; vectorY;Length;");
@@ -72,7 +73,18 @@ namespace ConflationLib
                         {
                             if (pv.Point.DistanceToVertex(pv2.Point) > _lengthBetweenPoints)
                                 continue;
-                            if(pv.Vector.GetAngle(pv2.Vector)< 0.3)
+                            if(!byLengthAndVector)
+                            {
+                                var kp = new KeyPoint
+                                {
+                                    PointVector1 = pv,
+                                    PointVector2 = pv2,
+                                    AngleBetweenVectors = pv.Vector.GetAngle(pv2.Vector)
+                                };
+                                keyPoints.Add(kp);
+                                sw.WriteLine(kp);
+                            }
+                            else if(pv.Vector.GetAngle(pv2.Vector)< AngleBetweenVectors )
                             {
                                 var kp = new KeyPoint
                                 {
