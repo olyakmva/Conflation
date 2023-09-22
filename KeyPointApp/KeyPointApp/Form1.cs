@@ -16,8 +16,8 @@ namespace KeyPointApp
         private readonly string _applicationPath;
         private readonly int startX = 0;
         private int startY = 10;
-        private readonly int ctrlHeight = 165;
-        private int afterBtnProcY = 570;
+        private readonly int ctrlHeight = 135;
+        private int afterBtnProcY = 480;
         private readonly int layerCtrlHeight = 45;
         private TableLayoutPanel table;
         public List<KeyPoint> keyPoints;
@@ -35,7 +35,7 @@ namespace KeyPointApp
             Colors.Init();
             paramControl = new ParamControl
             {
-                Location = new Point(startX, 350)
+                Location = new Point(startX, 280)
             };
             mainContainer.Panel1 .Controls .Add(paramControl);
             mainContainer.SplitterDistance  = paramControl.Width;
@@ -200,14 +200,18 @@ namespace KeyPointApp
             if (mapDatas.Count > 1)
             {
                 double maxDistanceBetweenPoints = paramControl .Distance;
-                var floatCharts = new FloatCharacteristics(mapDatas[0], mapDatas[1], maxDistanceBetweenPoints );
-                floatCharts .PointRange = paramControl .PointRange;
-                floatCharts.AngleBetweenVectors = paramControl.Angle;
-                floatCharts.Run(paramControl.IsVector);
+                var bendCharacteristics = new BendCharacteristics(mapDatas[0], mapDatas[1], maxDistanceBetweenPoints);
+                bendCharacteristics.AngleBetweenVectors = paramControl.Angle;
+                bendCharacteristics.Run(paramControl.IsVector);
+
+                //var floatCharts = new FloatCharacteristics(mapDatas[0], mapDatas[1], maxDistanceBetweenPoints );
+                //floatCharts .PointRange = paramControl .PointRange;
+                //floatCharts.AngleBetweenVectors = paramControl.Angle;
+                //floatCharts.Run(paramControl.IsVector);
                 
-                map1Vectors = floatCharts.map1Vectors;
-                map2Vectors = floatCharts.map2Vectors;
-                keyPoints = floatCharts.keyPoints;
+                //map1Vectors = floatCharts.map1Vectors;
+                //map2Vectors = floatCharts.map2Vectors;
+                keyPoints = bendCharacteristics.keyPoints;
 
             }
             mapPictureBox.Invalidate();
@@ -366,15 +370,15 @@ namespace KeyPointApp
             map1Vectors?.Clear();
             _state.Scale = 2;
             Colors.Init();
-            startY = 20;
-            afterBtnProcY = 570;
+            startY = 10;
+            afterBtnProcY = 480;
             //table.Controls.Clear();
             // mainContainer.Panel1.Controls.Remove(table);
             mainContainer.Panel1.Controls.Clear();
             mainContainer.Panel1.Controls.Add(btnProcess);
             paramControl = new ParamControl
             {
-                Location = new Point(startX, 350)
+                Location = new Point(startX, 280)
             };
             mainContainer.Panel1.Controls.Add(paramControl);
             mainContainer.SplitterDistance = paramControl.Width;
