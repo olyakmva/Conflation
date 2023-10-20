@@ -11,8 +11,32 @@ namespace SupportLib
             var list = fSet.Features;
             if (list.Count == 0)
                 return null;
-               
-            var map = new MapData();
+            GeometryType type = GeometryType.Unspecified;
+
+            switch (list[0].FeatureType)
+            {
+                case FeatureType.Line:
+                    type = GeometryType.Line;
+                    break;
+                case FeatureType.Point:
+                    type = GeometryType.Point;
+                    break;
+                case FeatureType.Polygon:
+                    type = GeometryType.Polygon;
+                    break;
+                case FeatureType.MultiPoint:
+                    type = GeometryType.MultiPoint;
+                    break;
+                case FeatureType.Unspecified:
+                    break;
+                default:
+                    throw new ArgumentException("Unknown feature type");
+            }
+
+            var map = new MapData
+            {
+                Geometry = type
+            };
             foreach (var item in list)
             {
                 var shape = item.ToShape();
@@ -28,9 +52,23 @@ namespace SupportLib
         }
 
         public static IFeatureSet ToShape(MapData map)
-        {
-            
-            FeatureType featureType = FeatureType.Line;
+        {        
+            FeatureType featureType = FeatureType.Unspecified;
+            switch (map.Geometry)
+            {
+                case GeometryType.Line:
+                    featureType = FeatureType.Line;
+                    break;
+                case GeometryType.Point:
+                    featureType = FeatureType.Point;
+                    break;
+                case GeometryType.Polygon:
+                    featureType = FeatureType.Polygon;
+                    break;
+                case GeometryType.MultiPoint:
+                    featureType = FeatureType.MultiPoint;
+                    break;
+            }
             FeatureSet fs = new(featureType);
             foreach (var pairList in map.MapObjDictionary)
             {

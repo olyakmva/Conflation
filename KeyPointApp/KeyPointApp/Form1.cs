@@ -20,7 +20,7 @@ namespace KeyPointApp
         private int afterBtnProcY = 480;
         private readonly int layerCtrlHeight = 45;
         private TableLayoutPanel table;
-        public List<KeyPoint> keyPoints;
+        public Dictionary<(int,int),List<MapKeyPoint>> keyPoints;
         public Dictionary<int, List<PointVectorRelation>> map2Vectors, map1Vectors;
         ParamControl paramControl;
         public MainForm()
@@ -203,15 +203,7 @@ namespace KeyPointApp
                 var bendCharacteristics = new BendCharacteristics(mapDatas[0], mapDatas[1], maxDistanceBetweenPoints);
                 bendCharacteristics.AngleBetweenVectors = paramControl.Angle;
                 bendCharacteristics.Run(paramControl.IsVector);
-
-                //var floatCharts = new FloatCharacteristics(mapDatas[0], mapDatas[1], maxDistanceBetweenPoints );
-                //floatCharts .PointRange = paramControl .PointRange;
-                //floatCharts.AngleBetweenVectors = paramControl.Angle;
-                //floatCharts.Run(paramControl.IsVector);
-                
-                //map1Vectors = floatCharts.map1Vectors;
-                //map2Vectors = floatCharts.map2Vectors;
-                keyPoints = bendCharacteristics.keyPoints;
+                keyPoints = bendCharacteristics.result;
 
             }
             mapPictureBox.Invalidate();
@@ -230,33 +222,21 @@ namespace KeyPointApp
                 var pen0 = new Pen(c, 1.75f);
                 Display(g, layer.MapData, pen0);
             }
-            var pen = new Pen(Color.DarkRed, 2.0f);
-           // DisplayVectors(g, map1Vectors, pen);
-            pen = new Pen(Color.DarkKhaki, 2.0f);
-            //DisplayVectors(g, map2Vectors, pen);
-
+ 
             if (keyPoints != null && keyPoints.Count > 0)
             {
-                var pen1 = new Pen(Color.Black, 2.0f);
-                var pen2 = new Pen(Color.Green, 2.0f);
-                foreach (var kpoint in keyPoints)
+                var blackBrush = new SolidBrush(Color.Black);
+                var pen2 = new Pen(Color.DarkGray, 2.5f);
+                foreach (var kpointList in (from p in keyPoints select p.Value))
                 {
-                    var pt1 = _state.GetPoint(kpoint.PointVector1.Point, mapPictureBox.Height - 1);
-                    var pointEnd = new MapPoint
+                    foreach (var keyPts in kpointList)
                     {
-                        X = kpoint.PointVector1.Point.X + kpoint.PointVector1.Vector.x,
-                        Y = kpoint.PointVector1.Point.Y + kpoint.PointVector1.Vector.y
-                    };
-                    var pt2 = _state.GetPoint(pointEnd, mapPictureBox.Height - 1);
-                    g.DrawLine(pen1, pt1, pt2);
-                    pt1 = _state.GetPoint(kpoint.PointVector2.Point, mapPictureBox.Height - 1);
-                    pointEnd = new MapPoint
-                    {
-                        X = kpoint.PointVector2.Point.X + kpoint.PointVector2.Vector.x,
-                        Y = kpoint.PointVector2.Point.Y + kpoint.PointVector2.Vector.y
-                    };
-                    pt2 = _state.GetPoint(pointEnd, mapPictureBox.Height - 1);
-                    g.DrawLine(pen2, pt1, pt2);
+                        var pt1 = _state.GetPoint(keyPts.Point1, mapPictureBox.Height - 1);
+                        var pt2 = _state.GetPoint(keyPts.Point2, mapPictureBox.Height - 1);
+                        g.DrawLine(pen2, pt1, pt2);
+                        g.FillEllipse(blackBrush, (float)pt1.X, (float)pt1.Y, 4.0f, 4.0f);
+                        g.FillEllipse(blackBrush, (float)pt2.X, (float)pt2.Y, 4.0f, 4.0f);
+                    }
                 }
             }
 
@@ -274,11 +254,11 @@ namespace KeyPointApp
                     var pointVectorList = pair.Value;
                     foreach (var item in pointVectorList)
                     {
-                        var pt1 = _state.GetPoint(item.Point, mapPictureBox.Height - 1);
+                        var pt1 = _state.GetPoint(item.StartPoint, mapPictureBox.Height - 1);
                         var pointEnd = new MapPoint
                         {
-                            X = item.Point.X + item.Vector.x,
-                            Y = item.Point.Y + item.Vector.y
+                            X = item.StartPoint.X + item.Vector.x,
+                            Y = item.StartPoint.Y + item.Vector.y
                         };
                         var pt2 = _state.GetPoint(pointEnd, mapPictureBox.Height - 1);
                         g.DrawLine(pen, pt1, pt2);
@@ -304,7 +284,7 @@ namespace KeyPointApp
                 {
                     var pt1 = _state.GetPoint(list[j], mapPictureBox.Height - 1);
                     var pt2 = _state.GetPoint(list[j + 1], mapPictureBox.Height - 1);
-                    g.FillRectangle(brush, pt1.X, pt1.Y, 5, 5);
+                    g.FillRectangle(brush, pt1.X, pt1.Y, 2, 2);
                     g.DrawLine(pen, pt1, pt2);
                 }
             }

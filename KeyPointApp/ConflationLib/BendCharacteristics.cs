@@ -7,10 +7,10 @@ namespace ConflationLib
     {
         private readonly MapData _mapData1;
         private readonly MapData _mapData2;
-        private double _lengthBetweenPoints;
+        private readonly double _lengthBetweenPoints;
         public double AngleBetweenVectors { get; set; } = 0.2;
-        public List<KeyPoint> keyPoints = new List<KeyPoint>();
-        
+        public List<KeyPoint> keyPoints = new();
+        public Dictionary<(int, int), List<MapKeyPoint>> result = new Dictionary<(int, int), List<MapKeyPoint>>(); 
         public BendCharacteristics(MapData mapA, MapData mapB, double length)
         {
             _mapData1 = mapA;
@@ -18,73 +18,89 @@ namespace ConflationLib
             _lengthBetweenPoints = length;
             
         }
-        public List<KeyPoint> Run(bool byLengthAndVector)
+        public void Run(bool byLengthAndVector)
         {
             var pointVectors1 = GetBendsCharacteristics(_mapData1);
             var pointVectors2 = GetBendsCharacteristics(_mapData2);
-            foreach (var pv in pointVectors1)
+            foreach (var pv1 in pointVectors1)
             {
-                foreach (var pv2 in pointVectors2)
+                var bends1 = pv1.Value;
+                foreach( var b1 in bends1)
                 {
-                   if (pv.Point.DistanceToVertex(pv2.Point) > _lengthBetweenPoints)
-                            continue;
-                   if (!byLengthAndVector)
-                   {
-                            var kp = new KeyPoint
+                    foreach (var pv2 in pointVectors2)
+                    {
+                        var bends2 = pv2.Value;
+                        foreach (var b2 in bends2)
+                        {
+                            if (b1.PeakPoint.DistanceToVertex(b2.PeakPoint) > _lengthBetweenPoints)
+                                continue;
+                            if(!result.ContainsKey((pv1.Key,pv2.Key)))
                             {
-                                PointVector1 = pv,
-                                PointVector2 = pv2,
-                                AngleBetweenVectors = pv.Vector.GetAngle(pv2.Vector)
-                            };
-                            keyPoints.Add(kp);
-                   }
-                   else if (pv.Vector.GetAngle(pv2.Vector) < AngleBetweenVectors)
-                   {
-                            var kp = new KeyPoint
+                                  result.Add((pv1.Key, pv2.Key), new List<MapKeyPoint>());
+                            }
+                            result[(pv1.Key, pv2.Key)].Add(new MapKeyPoint
                             {
-                                PointVector1 = pv,
-                                PointVector2 = pv2,
-                                AngleBetweenVectors = pv.Vector.GetAngle(pv2.Vector)
-                            };
-                            keyPoints.Add(kp);
-                   }
-
+                                Point1 = b1.PeakPoint,
+                                Point2 = b2.PeakPoint
+                            });
+                            //if (!byLengthAndVector)
+                            //{
+                            //         var kp = new KeyPoint
+                            //         {
+                            //             PointVector1 = pv,
+                            //             PointVector2 = pv2,
+                            //             AngleBetweenVectors = pv.Vector.GetAngle(pv2.Vector)
+                            //         };
+                            //         keyPoints.Add(kp);
+                            //}
+                            //else if (pv.Vector.GetAngle(pv2.Vector) < AngleBetweenVectors)
+                            //{
+                            //         var kp = new KeyPoint
+                            //         {
+                            //             PointVector1 = pv,
+                            //             PointVector2 = pv2,
+                            //             AngleBetweenVectors = pv.Vector.GetAngle(pv2.Vector)
+                            //         };
+                            //         keyPoints.Add(kp);
+                            //}
+                        }
+                    }
                 }
             }
-            return keyPoints;
+           
         }
 
-        public List<PointVectorRelation> GetBendsCharacteristics(MapData mapData)
+        public Dictionary<int, List<PointVectorRelation>> GetBendsCharacteristics(MapData mapData)
         {
-            var pointVectorList = new List<PointVectorRelation>();
-            foreach (var chain in from obj1 in mapData.MapObjDictionary
-                                  let chain = obj1.Value
-                                  select chain)
+            var pointVectorDictionary = new Dictionary<int,List<PointVectorRelation>>();
+            foreach (var obj in mapData.MapObjDictionary)                               
             {
+                var chain = obj.Value;
                 if (chain.Count < 3)
                     continue;
                 if (chain.Count == 3 && chain[0].CompareTo(chain[2]) == 0)
                     continue;
                 var index = 0;
-                List<Bend> bends = new List<Bend>();
+                pointVectorDictionary.Add(obj.Key, new List<PointVectorRelation>()); 
                 
                 while (index < chain.Count - 2)
                 {
-                    Bend b;
-                    ExtractBend(ref index, chain, out b);
+                    ExtractBend(ref index, chain, out Bend b);
+                    int peakIndx = b.PeakIndex();
                     Vector? vector = b.GetBaseVector();
                     if (vector != null)
                     {
                         var pointVectorRel = new PointVectorRelation
                         {
-                            Point = b.NodeList[0],
-                            Vector = vector
+                            StartPoint = b.NodeList[0],
+                            Vector = vector,
+                            PeakPoint = b.NodeList[peakIndx]
                         };
-                        pointVectorList.Add(pointVectorRel);
+                        pointVectorDictionary[obj.Key].Add(pointVectorRel);
                     }
                 }
             }
-            return pointVectorList;
+            return pointVectorDictionary;
         }
 
 
@@ -101,8 +117,8 @@ namespace ConflationLib
             //ищем конец изгиба
             while (index < chain.Count)
             {
-                var orient = Orientation(b.NodeList[b.NodeList.Count - 2],
-                    b.NodeList[b.NodeList.Count - 1], chain[index]);
+                var orient = Orientation(b.NodeList[^2],
+                    b.NodeList[^1], chain[index]);
                 if (orient != bendOrient)
                     break;
                 b.NodeList.Add(chain[index]);
@@ -144,4 +160,6 @@ namespace ConflationLib
             return ((v.X - u.X) * (w.X - v.X) + (v.Y - u.Y) * (w.Y - v.Y)) / Math.Sqrt((Math.Pow(v.X - u.X, 2) + Math.Pow(v.Y - u.Y, 2)) * (Math.Pow(w.X - v.X, 2) + Math.Pow(w.Y - v.Y, 2)));
         }
     }
+    
+
 }

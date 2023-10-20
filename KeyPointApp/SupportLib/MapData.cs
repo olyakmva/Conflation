@@ -11,6 +11,7 @@ namespace SupportLib
         public string FileName { get; set; }
         public int Count => GetAllVertices().Count;
         public string ColorName { get;  set; }
+        public GeometryType Geometry {  get; set; }
 
         public MapData()
         {
