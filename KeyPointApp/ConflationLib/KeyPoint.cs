@@ -2,23 +2,24 @@
 
 namespace ConflationLib
 {
-    public class KeyPoint
+    public class ObjAccordance
     {
-        public PointVectorRelation PointVector1 {  get; set; }
-        public PointVectorRelation PointVector2 { get; set; }
+        public int Map1ObjId {  get; set; }
+        public int Map2ObjId { get; set; }
 
-        public double AngleBetweenVectors { get; set; }
-        public double LengthBetweenPoints
+        public int BendsNumber1 {  get; set; }
+        public int BendsNumber2 { get; set; }
+        public int KeyPointNumber { get; set; }
+        public double AccordanceCoef
         {
             get
             {
-                SupportLib.MapPoint point = PointVector1.StartPoint;
-                return point.DistanceToVertex(PointVector2.StartPoint);
+                return Math.Round(((double)KeyPointNumber) / (Math.Min(BendsNumber1, BendsNumber2)) * 100);
             }
         }
         public override string ToString()
         {
-            return string.Format("{0} {1} {2:f2};{3:f2};",PointVector1,PointVector2,AngleBetweenVectors,LengthBetweenPoints);
+            return string.Format("{0}; {1}; {2:f2};", Map1ObjId,Map2ObjId,AccordanceCoef);
         }
     }
 

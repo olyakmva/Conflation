@@ -21,7 +21,7 @@ namespace KeyPointApp
         private readonly int layerCtrlHeight = 45;
         private TableLayoutPanel table;
         public Dictionary<(int,int),List<MapKeyPoint>> keyPoints;
-        public Dictionary<int, List<PointVectorRelation>> map2Vectors, map1Vectors;
+        public Dictionary<int, List<BendProperty>> map2Vectors, map1Vectors;
         ParamControl paramControl;
         public MainForm()
         {
@@ -204,6 +204,7 @@ namespace KeyPointApp
                 bendCharacteristics.AngleBetweenVectors = paramControl.Angle;
                 bendCharacteristics.Run(paramControl.IsVector);
                 keyPoints = bendCharacteristics.result;
+                var rate = bendCharacteristics.objAccordanceList;
 
             }
             mapPictureBox.Invalidate();
@@ -243,29 +244,29 @@ namespace KeyPointApp
             g.Flush();
         }
 
-        private void DisplayVectors(Graphics g, Dictionary<int, List<PointVectorRelation>> map1Vectors, Pen pen)
-        {
+        //private void DisplayVectors(Graphics g, Dictionary<int, List<BendProperty>> map1Vectors, Pen pen)
+        //{
 
-            if (map1Vectors != null && map1Vectors.Count > 0)
-            {
+        //    if (map1Vectors != null && map1Vectors.Count > 0)
+        //    {
 
-                foreach (var pair in map1Vectors)
-                {
-                    var pointVectorList = pair.Value;
-                    foreach (var item in pointVectorList)
-                    {
-                        var pt1 = _state.GetPoint(item.StartPoint, mapPictureBox.Height - 1);
-                        var pointEnd = new MapPoint
-                        {
-                            X = item.StartPoint.X + item.Vector.x,
-                            Y = item.StartPoint.Y + item.Vector.y
-                        };
-                        var pt2 = _state.GetPoint(pointEnd, mapPictureBox.Height - 1);
-                        g.DrawLine(pen, pt1, pt2);
-                    }
-                }
-            }
-        }
+        //        foreach (var pair in map1Vectors)
+        //        {
+        //            var pointVectorList = pair.Value;
+        //            foreach (var item in pointVectorList)
+        //            {
+        //                var pt1 = _state.GetPoint(item.StartPoint, mapPictureBox.Height - 1);
+        //                var pointEnd = new MapPoint
+        //                {
+        //                    X = item.StartPoint.X + item.Vector.x,
+        //                    Y = item.StartPoint.Y + item.Vector.y
+        //                };
+        //                var pt2 = _state.GetPoint(pointEnd, mapPictureBox.Height - 1);
+        //                g.DrawLine(pen, pt1, pt2);
+        //            }
+        //        }
+        //    }
+        //}
 
         /// <summary>
         /// Отображение MapData md на графике g

@@ -9,7 +9,7 @@ namespace ConflationLib
         private readonly MapData _mapData2;
         private readonly double _lengthBetweenPoints;
         public double AngleBetweenVectors { get; set; } = 0.2;
-        public List<KeyPoint> keyPoints = new();
+        public List<ObjAccordance> objAccordanceList = new();
         public Dictionary<(int, int), List<MapKeyPoint>> result = new Dictionary<(int, int), List<MapKeyPoint>>(); 
         public BendCharacteristics(MapData mapA, MapData mapB, double length)
         {
@@ -20,49 +20,46 @@ namespace ConflationLib
         }
         public void Run(bool byLengthAndVector)
         {
-            var pointVectors1 = GetBendsCharacteristics(_mapData1);
-            var pointVectors2 = GetBendsCharacteristics(_mapData2);
-            foreach (var pv1 in pointVectors1)
+            var bendProps1 = GetBendsCharacteristics(_mapData1);
+            var bendProps2 = GetBendsCharacteristics(_mapData2);
+            foreach (var pv1 in bendProps1)
             {
                 var bends1 = pv1.Value;
                 foreach( var b1 in bends1)
                 {
-                    foreach (var pv2 in pointVectors2)
+                    foreach (var pv2 in bendProps2)
                     {
                         var bends2 = pv2.Value;
                         foreach (var b2 in bends2)
                         {
                             if (b1.PeakPoint.DistanceToVertex(b2.PeakPoint) > _lengthBetweenPoints)
                                 continue;
+                            
+                            if (b1.Orientation != b2.Orientation)
+                                continue;
                             if(!result.ContainsKey((pv1.Key,pv2.Key)))
                             {
                                   result.Add((pv1.Key, pv2.Key), new List<MapKeyPoint>());
+                                
                             }
                             result[(pv1.Key, pv2.Key)].Add(new MapKeyPoint
                             {
                                 Point1 = b1.PeakPoint,
                                 Point2 = b2.PeakPoint
                             });
-                            //if (!byLengthAndVector)
-                            //{
-                            //         var kp = new KeyPoint
-                            //         {
-                            //             PointVector1 = pv,
-                            //             PointVector2 = pv2,
-                            //             AngleBetweenVectors = pv.Vector.GetAngle(pv2.Vector)
-                            //         };
-                            //         keyPoints.Add(kp);
-                            //}
-                            //else if (pv.Vector.GetAngle(pv2.Vector) < AngleBetweenVectors)
-                            //{
-                            //         var kp = new KeyPoint
-                            //         {
-                            //             PointVector1 = pv,
-                            //             PointVector2 = pv2,
-                            //             AngleBetweenVectors = pv.Vector.GetAngle(pv2.Vector)
-                            //         };
-                            //         keyPoints.Add(kp);
-                            //}
+                           
+                        }
+                        if (result.ContainsKey((pv1.Key, pv2.Key)))
+                            {
+                            objAccordanceList.Add(new ObjAccordance
+                            {
+                                BendsNumber1 = pv1.Value.Count,
+                                BendsNumber2 = pv2.Value.Count,
+                                Map1ObjId = pv1.Key,
+                                Map2ObjId = pv2.Key,
+                                KeyPointNumber = result[(pv1.Key, pv2.Key)].Count
+
+                            });
                         }
                     }
                 }
@@ -70,9 +67,9 @@ namespace ConflationLib
            
         }
 
-        public Dictionary<int, List<PointVectorRelation>> GetBendsCharacteristics(MapData mapData)
+        public Dictionary<int, List<BendProperty>> GetBendsCharacteristics(MapData mapData)
         {
-            var pointVectorDictionary = new Dictionary<int,List<PointVectorRelation>>();
+            var bendPropsDictionary = new Dictionary<int,List<BendProperty>>();
             foreach (var obj in mapData.MapObjDictionary)                               
             {
                 var chain = obj.Value;
@@ -81,26 +78,24 @@ namespace ConflationLib
                 if (chain.Count == 3 && chain[0].CompareTo(chain[2]) == 0)
                     continue;
                 var index = 0;
-                pointVectorDictionary.Add(obj.Key, new List<PointVectorRelation>()); 
+                bendPropsDictionary.Add(obj.Key, new List<BendProperty>()); 
                 
                 while (index < chain.Count - 2)
                 {
                     ExtractBend(ref index, chain, out Bend b);
                     int peakIndx = b.PeakIndex();
-                    Vector? vector = b.GetBaseVector();
-                    if (vector != null)
-                    {
-                        var pointVectorRel = new PointVectorRelation
+                    
+                        var bendProps = new BendProperty
                         {
                             StartPoint = b.NodeList[0],
-                            Vector = vector,
-                            PeakPoint = b.NodeList[peakIndx]
+                            PeakPoint = b.NodeList[peakIndx],
+                            Orientation = Orientation(b.NodeList[0], b.NodeList[1], b.NodeList[2])
                         };
-                        pointVectorDictionary[obj.Key].Add(pointVectorRel);
-                    }
+                        bendPropsDictionary[obj.Key].Add(bendProps);
+                    
                 }
             }
-            return pointVectorDictionary;
+            return bendPropsDictionary;
         }
 
 
