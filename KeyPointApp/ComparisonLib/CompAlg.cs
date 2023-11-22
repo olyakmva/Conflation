@@ -1,14 +1,5 @@
 ﻿using SupportLib;
-using AlgorithmsLibrary;
-using VectorLib;
-using System.Runtime.Serialization.Formatters;
-using System.Drawing;
-using System.Numerics;
-using System.Collections.Generic;
-using DotSpatial.Data;
-using DotSpatial.NTSExtension;
-using NetTopologySuite.Triangulate.QuadEdge;
-using System.Security.Cryptography;
+
 
 namespace ComparisonLib
 {
