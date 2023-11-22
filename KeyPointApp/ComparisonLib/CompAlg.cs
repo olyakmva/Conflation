@@ -12,7 +12,8 @@ using System.Security.Cryptography;
 
 namespace ComparisonLib
 {
-    public class PointMapComparison //RPoint = [RPTF, RPTA]; RT = max [RPTF, RPTA];
+    
+    public class PointMapComparison //RPoint = [RPTF, RPTA]; RT = max [RPTF, RPTA]
     {
         double repetitionRate; //RT is the repetition rate of vector data нужно ли содержание этой характеристики?
         double pointFeatureRepetitionRate; //Rptf
@@ -97,8 +98,8 @@ namespace ComparisonLib
             double MinCapacityOfPoints = Math.Min(PointsOFMap1.Count, PointsOFMap2.Count);               //Fbc Feature cardinality
             double NumberOfRepeatedFeatures = CountOfRepeatedPoints(PointsOFMap1, PointsOFMap2);        //Frc Number of repeated features 
 
-            List<double> ValueOfAngles1 = FormingAnglesByPoints(PointsOFMap1);   //Ar 
-            List<double> ValueOfAngles2 = FormingAnglesByPoints(PointsOFMap2);   //At
+            List<double> ValueOfAngles1 = FormingAnglesByPoints(md1.GetMapObjItems());   //Ar 
+            List<double> ValueOfAngles2 = FormingAnglesByPoints(md2.GetMapObjItems());   //At
             double MinCapacityOfAngles = Math.Min(ValueOfAngles1.Count, ValueOfAngles2.Count);                       //Abc  Angle cardinality
             double NumberOfRepeatedIncludedAngles = CountRepeatedIncludedAngles(ValueOfAngles1, ValueOfAngles1);  //Farc Number of repeated included angles
 
@@ -109,9 +110,6 @@ namespace ComparisonLib
         }
         public LineMapComparison InfringementDetectionAlgorithmForLine(MapData md1, MapData md2) //Do this method if geometry of map is Line
         {
-            //List<MapObjItem> MapItems1 = md1.GetMapObjItems(); //Dr         working with objItems(not points) because we need sttart and end position
-            //List<MapObjItem> MapItems2 = md2.GetMapObjItems(); //Dt
-
             double MinCapacityOfLines = Math.Min(md1.MapObjDictionary.Count, md2.MapObjDictionary.Count);   //Fbc
             double NumberOfRepeatedPositions = CountOfRepeatedLinesPositions(md1.GetMapObjItems(),md2.GetMapObjItems()); //Frc - Number of repeated features
 
@@ -134,9 +132,7 @@ namespace ComparisonLib
         }
         public PolygonMapComparison InfringementDetectionAlgorithmForPolygon(MapData md1, MapData md2) //Do this method if geometry of map is Polygon
         {
-            //List<MapObjItem> MapItems1 = md1.GetMapObjItems(); //Dr      
-            //List<MapObjItem> MapItems2 = md2.GetMapObjItems(); //Dt
-
+            
             List<MapPoint> MeanCenters1 = GetPolygonCenters(md1.GetMapObjItems()); //Mr
             List<MapPoint> MeanCenters2 = GetPolygonCenters(md2.GetMapObjItems()); //Mt
             double MinCapacityOfCenters = Math.Min(MeanCenters1.Count, MeanCenters2.Count); //Mbc
@@ -148,8 +144,8 @@ namespace ComparisonLib
             double MinCapacityOfPoints = Math.Min(PointsOFMap1.Count, PointsOFMap2.Count); //Cbc
             double NumberOfRepeatedVertices = CountOfRepeatedPoints(PointsOFMap1, PointsOFMap2); //Fcrc
 
-            List<double> ValueOfAngles1 = FormingAnglesByPoints(PointsOFMap1);   //Ar 
-            List<double> ValueOfAngles2 = FormingAnglesByPoints(PointsOFMap2);   //At
+            List<double> ValueOfAngles1 = FormingAnglesByPoints(md1.GetMapObjItems());   //Ar 
+            List<double> ValueOfAngles2 = FormingAnglesByPoints(md2.GetMapObjItems());   //At
             double MinCapacityOfAngles = Math.Min(ValueOfAngles1.Count, ValueOfAngles2.Count);                       //Abc  Angle cardinality
             double NumberOfRepeatedIncludedAngles = CountRepeatedIncludedAngles(ValueOfAngles1, ValueOfAngles1);  //Farc Number of repeated included angles
 
