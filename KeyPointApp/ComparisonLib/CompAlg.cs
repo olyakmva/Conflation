@@ -3,55 +3,15 @@
 
 namespace ComparisonLib
 {
-    
-    public class PointMapComparison //RPoint = [RPTF, RPTA]; RT = max [RPTF, RPTA]
+    public class ComparisionAlgorithm
     {
-        double repetitionRate; //RT is the repetition rate of vector data нужно ли содержание этой характеристики?
-        double pointFeatureRepetitionRate; //Rptf
-        double pointFeatureIncludedAngleRepetitionRate; //Rpta 
-        public PointMapComparison(double Rt, double Rptf, double Rpta)
-        {
-            repetitionRate = Rt;
-            pointFeatureRepetitionRate = Rptf;
-            pointFeatureIncludedAngleRepetitionRate = Rpta;
-        }
-
-    }
-    public class LineMapComparison //: RLineString = [RLSF, RLSA, RLSC]; RT = max [RLSF, RLSA, RLSC];
-    {
-        double repetitionRate;
-        double lineFeatureRepetitionRate;
-        double lineFeatureIncludedAngleRepetitionRate;
-        double lineFeatureVertexRepetitionRate;
-        //double repetitionRate; //RT
-
-        public LineMapComparison(double Rt, double RLSF,double RLSA, double RLSC)
-        {
-            repetitionRate = Rt;
-            lineFeatureRepetitionRate = RLSF;
-            lineFeatureIncludedAngleRepetitionRate= RLSA;
-            lineFeatureVertexRepetitionRate= RLSC;
-        }
-    }
-    public class PolygonMapComparison //:RPolygon = [RPNF, RPNA, RPNC]; RT = max [RPNF, RPNA, RPNC];
-    {
-        double repetitionRate;
-        double polygonFeatureRepetitionRate;
-        double polygonFeatureIncludedAngleRepetitionRate;
-        double polygonFeatureVertexRepetitionRate;
-        //double repetitionRate; //RT
-
-        public PolygonMapComparison(double Rt,double RPNF, double RPNA, double RPNC)
-        {
-            repetitionRate=Rt;
-            polygonFeatureRepetitionRate = RPNF;
-            polygonFeatureIncludedAngleRepetitionRate = RPNA;
-            polygonFeatureVertexRepetitionRate = RPNC;
-        }
-    }
-    public class CompAlg
-    {        
-        public double AzAngleCalculator(MapPoint mp1, MapPoint mp2) //azimuth angle calculation s in different quadrants
+        /// <summary>
+        /// Azimuth angle calculations in different quadrants
+        /// </summary>
+        /// <param name="mp1">Map point 1</param>
+        /// <param name="mp2">Map point 2</param>
+        /// <returns></returns>
+        public double AzAngleCalculator(MapPoint mp1, MapPoint mp2) 
         {
             double alfa = Math.Atan((mp2.Y - mp1.Y) / (mp2.X - mp1.X)); //calculating angle between the line segment()two points P and the x-axis
             if (mp1.X >= mp2.X)

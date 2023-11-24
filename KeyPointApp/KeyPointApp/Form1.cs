@@ -4,6 +4,7 @@ using MainForm.Controls;
 using SupportLib;
 using ConflationLib;
 using KeyPointApp.Controls;
+using ComparisonLib;
 
 namespace KeyPointApp
 {
@@ -205,7 +206,8 @@ namespace KeyPointApp
                 bendCharacteristics.Run(paramControl.IsVector);
                 keyPoints = bendCharacteristics.result;
                 var rate = bendCharacteristics.objAccordanceList;
-
+                var compAlgm = new ComparisionAlgorithm();
+                var result = compAlgm.InfringementDetectionAlgorithmForLine(mapDatas[0], mapDatas[1]);
             }
             mapPictureBox.Invalidate();
 

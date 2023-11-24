@@ -1,5 +1,4 @@
 ﻿using SupportLib;
-using VectorLib;
 
 namespace ConflationLib
 {
@@ -49,20 +48,20 @@ namespace ConflationLib
                             });
                            
                         }
-                        if (result.ContainsKey((pv1.Key, pv2.Key)))
-                            {
-                            objAccordanceList.Add(new ObjAccordance
-                            {
-                                BendsNumber1 = pv1.Value.Count,
-                                BendsNumber2 = pv2.Value.Count,
-                                Map1ObjId = pv1.Key,
-                                Map2ObjId = pv2.Key,
-                                KeyPointNumber = result[(pv1.Key, pv2.Key)].Count
-
-                            });
-                        }
                     }
                 }
+            }
+            foreach(var pair in result)
+            {
+                var item = new ObjAccordance()
+                {
+                    Map1ObjId = pair.Key.Item1,
+                    Map2ObjId = pair.Key.Item2,
+                    KeyPointNumber = pair.Value.Count,
+                    BendsNumber1 = bendProps1[pair.Key.Item1].Count,
+                    BendsNumber2 = bendProps2[pair.Key.Item2].Count
+                };
+                objAccordanceList.Add(item);
             }
            
         }
