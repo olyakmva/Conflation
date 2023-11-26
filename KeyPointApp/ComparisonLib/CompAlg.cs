@@ -13,7 +13,7 @@ namespace ComparisonLib
         /// <returns></returns>
         public double AzAngleCalculator(MapPoint mp1, MapPoint mp2) 
         {
-            double alfa = Math.Atan((mp2.Y - mp1.Y) / (mp2.X - mp1.X)); //calculating angle between the line segment()two points P and the x-axis
+            double alfa = Math.Atan((mp2.Y - mp1.Y)/ (mp2.X - mp1.X)) * 180 / Math.PI; //calculating angle between the line segment()two points P and the x-axis
             if (mp1.X >= mp2.X)
                 return 270 - alfa; // when P is in the sec ond and third quadrants
             else return 90 - alfa; // 
@@ -124,23 +124,14 @@ namespace ComparisonLib
         public double CountOfRepeatedPoints(List<MapPoint> ObjItems1, List<MapPoint> ObjItems2) //counting repered points 
         {
             double count = 0;
-            //foreach (MapObjItem obj1 in ObjItems1)
-            
-                //foreach (MapObjItem obj2 in ObjItems2)
-                
-                    //if (obj1.Id == obj2.Id)//нужно ли это условие или просто сравниваем все точки вподряд
-                    
-                        foreach (MapPoint mp1 in ObjItems1)
-                        {
-                            foreach (MapPoint mp2 in ObjItems2)
-                            {
-                                if (mp1.Equals(mp2))  //сравнение только по координатам через equels
-                                    count++;
-                            }
-                        }
-                    
-                
-            
+            foreach (MapPoint mp1 in ObjItems1)
+            {
+                foreach (MapPoint mp2 in ObjItems2)
+                {
+                    if (mp1.Equals(mp2))  
+                        count++;
+                }
+            }
             return count;
         }
         public double CountRepeatedMeanCenters(List<MapPoint> centers1, List<MapPoint> centers2) //counting repered mean centers of polygon
@@ -185,15 +176,9 @@ namespace ComparisonLib
             List<double> ValueOfAngles = new List<double>();
             foreach (MapObjItem mpObj in mapObjs)
             {
-                for (int i = 0; i < mpObj.Points.Count; i++) //глупый перебор всевозможных углов между точками, можно сделать быстрее?
+                for (int i = 0; i < mpObj.Points.Count-2; i++) 
                 {
-                    for (int j = i + 1; j < mpObj.Points.Count - 1; j++) // соединение точек внутри одного объекта или карты в целом
-                    {
-                        for (int k = j + 1; k < mpObj.Points.Count - 2; k++)
-                        {
-                            ValueOfAngles.Add(IncludedAngleCalculator(mpObj.Points[i], mpObj.Points[j], mpObj.Points[k]));
-                        }
-                    }
+                    ValueOfAngles.Add(IncludedAngleCalculator(mpObj.Points[i], mpObj.Points[i+1], mpObj.Points[i+2]));
                 }
             }
             
