@@ -13,10 +13,15 @@ namespace ComparisonLib
         /// <returns></returns>
         public double AzAngleCalculator(MapPoint mp1, MapPoint mp2) 
         {
-            double alfa = Math.Atan((mp2.Y - mp1.Y)/ (mp2.X - mp1.X)) * 180 / Math.PI; //calculating angle between the line segment()two points P and the x-axis
-            if (mp1.X >= mp2.X)
-                return 270 - alfa; // when P is in the sec ond and third quadrants
-            else return 90 - alfa; // 
+            if(IsValueQuiteСlose(mp2.X, mp1.X))
+                return 0; // при равных иксах угол 0 ?
+            else
+            {
+                double alfa = Math.Atan((mp2.Y - mp1.Y) / (mp2.X - mp1.X)) * 180 / Math.PI; //calculating angle between the line segment()two points P and the x-axis
+                if (mp1.X > mp2.X)
+                    return 270 - alfa; // when P is in the sec ond and third quadrants
+                else return 90 - alfa;
+            }             
         }
         public double IncludedAngleCalculator(MapPoint mp1, MapPoint mp2, MapPoint mp3) //calculating included angle for line consisting of 2 segments(tree points)
         {
@@ -115,7 +120,7 @@ namespace ComparisonLib
             {
                 for(int j =0; j<ValueOfAngles2.Count; j++)
                 {
-                    if (ValueOfAngles1[i]== ValueOfAngles2[j])
+                    if (IsValueQuiteСlose(ValueOfAngles1[i],ValueOfAngles2[j])) 
                         count++;
                 }
             }
@@ -128,7 +133,7 @@ namespace ComparisonLib
             {
                 foreach (MapPoint mp2 in ObjItems2)
                 {
-                    if (mp1.Equals(mp2))  
+                    if (IsPointQuiteClose(mp1,mp2))
                         count++;
                 }
             }
@@ -141,7 +146,7 @@ namespace ComparisonLib
             {
                 for (int j = 0; j < centers2.Count; j++)
                 {
-                    if (centers1[i].Equals(centers2[j]))
+                    if (IsPointQuiteClose(centers1[i],centers2[j]))
                         count++;
                 }
             }
@@ -154,10 +159,8 @@ namespace ComparisonLib
             {
                 foreach(MapObjItem mpObj2 in MapItems2)
                 {
-                    if ((mpObj1.Points[0].Equals(mpObj2.Points[0])) && (mpObj1.Points[mpObj1.Points.Count-1].Equals(mpObj2.Points[mpObj2.Points.Count - 1])))
-                    {
+                    if (IsPointQuiteClose(mpObj1.Points[0],mpObj2.Points[0]) && IsPointQuiteClose(mpObj1.Points[mpObj1.Points.Count-1],mpObj2.Points[mpObj2.Points.Count - 1]))
                         count++;
-                    }
                 }
             }
             return count;
@@ -180,9 +183,22 @@ namespace ComparisonLib
                 {
                     ValueOfAngles.Add(IncludedAngleCalculator(mpObj.Points[i], mpObj.Points[i+1], mpObj.Points[i+2]));
                 }
-            }
-            
+            }            
             return ValueOfAngles;
+        }
+        public bool IsValueQuiteСlose (double d1, double d2)
+        {
+            double eps = 0.000001; //достаточно ли это число для сравнения
+            if (Math.Abs(d1 - d2) < eps)
+                return true;
+            else return false;
+        }
+        public bool IsPointQuiteClose(MapPoint mp1, MapPoint mp2)
+        {
+            double eps = 0.000001;
+            if (Math.Abs(mp1.X-mp2.X) < eps&& Math.Abs(mp1.Y - mp2.Y) < eps)
+                return true;
+            else return false;
         }
     }
 }
