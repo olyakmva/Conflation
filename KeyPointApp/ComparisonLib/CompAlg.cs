@@ -57,7 +57,7 @@ namespace ComparisonLib
             List<double> ValueOfAngles1 = FormingAnglesByPoints(md1.GetMapObjItems());   //Ar 
             List<double> ValueOfAngles2 = FormingAnglesByPoints(md2.GetMapObjItems());   //At
             double MinCapacityOfAngles = Math.Min(ValueOfAngles1.Count, ValueOfAngles2.Count);                       //Abc  Angle cardinality
-            double NumberOfRepeatedIncludedAngles = CountRepeatedIncludedAngles(ValueOfAngles1, ValueOfAngles1);  //Farc Number of repeated included angles
+            double NumberOfRepeatedIncludedAngles = CountRepeatedIncludedAngles(ValueOfAngles1, ValueOfAngles2);  //Farc Number of repeated included angles
 
             double PointFeatureRepetitionRate = (NumberOfRepeatedFeatures / MinCapacityOfPoints) * 100; //Rptf =(Frc/Fbc)*100%
             double PointFeatureIncludedAngleRepetitionRate = (NumberOfRepeatedIncludedAngles / MinCapacityOfAngles) * 100; //Rpta =(Farc/Abc)*100%
@@ -73,9 +73,9 @@ namespace ComparisonLib
             List<MapPoint> PointsOFMap2 = md2.GetAllVertices();  // Ct
             
             List<double> ValueOfAngles1 = FormingAnglesByPoints(md1.GetMapObjItems());   //Ar 
-            List<double> ValueOfAngles2 = FormingAnglesByPoints(md1.GetMapObjItems());   //At
+            List<double> ValueOfAngles2 = FormingAnglesByPoints(md2.GetMapObjItems());   //At
             double MinCapacityOfAngles = Math.Min(ValueOfAngles1.Count, ValueOfAngles2.Count);                       //Abc  Angle cardinality
-            double NumberOfRepeatedIncludedAngles = CountRepeatedIncludedAngles(ValueOfAngles1, ValueOfAngles1);  //Farc Number of repeated included angles
+            double NumberOfRepeatedIncludedAngles = CountRepeatedIncludedAngles(ValueOfAngles1, ValueOfAngles2);  //Farc Number of repeated included angles
 
             double MinCapacityOfPoints = Math.Min(PointsOFMap1.Count, PointsOFMap2.Count);               //Cbc - smaller cardinality
             double NumberOfRepeatedVertices = CountOfRepeatedPoints(PointsOFMap1, PointsOFMap2);        //Fcrc - Number of repeated vertices
@@ -103,7 +103,7 @@ namespace ComparisonLib
             List<double> ValueOfAngles1 = FormingAnglesByPoints(md1.GetMapObjItems());   //Ar 
             List<double> ValueOfAngles2 = FormingAnglesByPoints(md2.GetMapObjItems());   //At
             double MinCapacityOfAngles = Math.Min(ValueOfAngles1.Count, ValueOfAngles2.Count);                       //Abc  Angle cardinality
-            double NumberOfRepeatedIncludedAngles = CountRepeatedIncludedAngles(ValueOfAngles1, ValueOfAngles1);  //Farc Number of repeated included angles
+            double NumberOfRepeatedIncludedAngles = CountRepeatedIncludedAngles(ValueOfAngles1, ValueOfAngles2);  //Farc Number of repeated included angles
 
 
             double PolygonFeatureRepetitionRate = (NumberOfRepeatedMeanCenters / MinCapacityOfCenters) * 100; //Rlsf=(Frc/Mbc)*100%
