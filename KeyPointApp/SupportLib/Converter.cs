@@ -40,13 +40,14 @@ namespace SupportLib
             foreach (var item in list)
             {
                 var shape = item.ToShape();
+                int fid = Convert.ToInt32(shape.Attributes[1]);
                 var points = new List<MapPoint>();
                 for(var t=0; t< shape.Vertices.Length;t+=2)
                 {
-                    var p = new MapPoint(shape.Vertices[t], shape.Vertices[t+1], item.Fid, 1.0);
+                    var p = new MapPoint(shape.Vertices[t], shape.Vertices[t+1], fid, 1.0);
                     points.Add(p);
                 }
-                map.MapObjDictionary.Add(item.Fid, points);
+                map.MapObjDictionary.Add(fid, points);
             }
             return map;
         }
