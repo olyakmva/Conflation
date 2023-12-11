@@ -206,6 +206,14 @@ namespace KeyPointApp
                 bendCharacteristics.Run(paramControl.IsVector);
                 keyPoints = bendCharacteristics.result;
                 var rate = bendCharacteristics.objAccordanceList;
+                using (var sw = new StreamWriter("rate.txt", true))
+                {
+                    foreach (var objAccordance in rate)
+                    {
+                        if (objAccordance != null)
+                            sw.WriteLine(objAccordance);
+                    }
+                }
                 var compAlgm = new ComparisionAlgorithm();
                 var result = compAlgm.InfringementDetectionAlgorithmForLine(mapDatas[0], mapDatas[1]);
             }

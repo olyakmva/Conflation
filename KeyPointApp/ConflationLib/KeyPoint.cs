@@ -2,6 +2,7 @@
 
 namespace ConflationLib
 {
+    [Serializable]
     public class ObjAccordance
     {
         public int Map1ObjId {  get; set; }

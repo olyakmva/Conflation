@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31729.503
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KeyPointApp", "KeyPointApp\KeyPointApp.csproj", "{CC09704C-3D67-4576-8F76-0DFF6AE724CF}"
 EndProject
@@ -14,6 +14,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VectorLib", "VectorLib\VectorLib.csproj", "{95D58DCF-9595-49C1-B27A-5A13FAC57560}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ComparisonLib", "ComparisonLib\ComparisonLib.csproj", "{1A9802BD-19DE-4471-B7B5-761F494C077C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComparisionLibTestProj", "ComparisionLibTestProj\ComparisionLibTestProj.csproj", "{63F499E9-EC34-4D02-B0E0-FDF434DAA2C2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{1A9802BD-19DE-4471-B7B5-761F494C077C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1A9802BD-19DE-4471-B7B5-761F494C077C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1A9802BD-19DE-4471-B7B5-761F494C077C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63F499E9-EC34-4D02-B0E0-FDF434DAA2C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63F499E9-EC34-4D02-B0E0-FDF434DAA2C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63F499E9-EC34-4D02-B0E0-FDF434DAA2C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63F499E9-EC34-4D02-B0E0-FDF434DAA2C2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
