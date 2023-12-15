@@ -200,25 +200,26 @@ namespace KeyPointApp
             }
             if (mapDatas.Count > 1)
             {
-                double maxDistanceBetweenPoints = paramControl .Distance;
+                double maxDistanceBetweenPoints = paramControl .BendDistance;
                 var bendCharacteristics = new BendCharacteristics(mapDatas[0], mapDatas[1], maxDistanceBetweenPoints);
-                bendCharacteristics.AngleBetweenVectors = paramControl.Angle;
-                bendCharacteristics.Run(paramControl.IsVector);
+                bendCharacteristics.Run();
                 keyPoints = bendCharacteristics.result;
-                var rate = bendCharacteristics.objAccordanceList;
-                using (var sw = new StreamWriter("rate.txt", true))
+                bendCharacteristics.Save("rate.txt");
+                var compAlgm = new ComparisionAlgorithm
                 {
-                    foreach (var objAccordance in rate)
-                    {
-                        if (objAccordance != null)
-                            sw.WriteLine(objAccordance);
-                    }
-                }
-                var compAlgm = new ComparisionAlgorithm();
+                    PointSimilarityMeasure = paramControl.PointDistance,
+                    AngleSimilarityMeasure = paramControl.AngleGap
+                };
                 var result = compAlgm.InfringementDetectionAlgorithmForLine(mapDatas[0], mapDatas[1]);
+                Save("rate.txt", result);
             }
             mapPictureBox.Invalidate();
 
+        }
+        private void Save(string fileName, LineMapComparison res)
+        {
+            using var sw = new StreamWriter(fileName, true);
+            sw.WriteLine(res.ToString());
         }
         private void MapPictureBoxPaint(object sender, PaintEventArgs e)
         {

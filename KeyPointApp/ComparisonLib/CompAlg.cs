@@ -5,6 +5,8 @@ namespace ComparisonLib
 {
     public class ComparisionAlgorithm
     {
+        public double AngleSimilarityMeasure = 1.0;
+        public double PointSimilarityMeasure = 10.0;
         /// <summary>
         /// Azimuth angle calculations in different quadrants
         /// </summary>
@@ -36,7 +38,7 @@ namespace ComparisonLib
             List<MapPoint> points = item.Points;
             double x = 0;
             double y = 0;
-            foreach (MapPoint mp in points) //передалать метод на создание точки!!!!
+            foreach (MapPoint mp in points) 
             {
                 x += mp.X;
                 y += mp.Y;
@@ -120,8 +122,11 @@ namespace ComparisonLib
             {
                 for(int j =0; j<ValueOfAngles2.Count; j++)
                 {
-                    if (IsValueQuiteСlose(ValueOfAngles1[i],ValueOfAngles2[j])) 
+                    if (IsValueQuiteСlose(ValueOfAngles1[i], ValueOfAngles2[j]))
+                    {
                         count++;
+                        break;
+                    }
                 }
             }
             return count;
@@ -188,15 +193,13 @@ namespace ComparisonLib
         }
         public bool IsValueQuiteСlose (double d1, double d2)
         {
-            double eps = 0.000001; //достаточно ли это число для сравнения
-            if (Math.Abs(d1 - d2) < eps)
+            if (Math.Abs(d1 - d2) < AngleSimilarityMeasure)
                 return true;
             else return false;
         }
         public bool IsPointQuiteClose(MapPoint mp1, MapPoint mp2)
         {
-            double eps = 0.000001;
-            if (Math.Abs(mp1.X-mp2.X) < eps&& Math.Abs(mp1.Y - mp2.Y) < eps)
+            if (Math.Abs(mp1.X-mp2.X) < PointSimilarityMeasure && Math.Abs(mp1.Y - mp2.Y) < PointSimilarityMeasure)
                 return true;
             else return false;
         }

@@ -15,7 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VectorLib", "VectorLib\Vect
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ComparisonLib", "ComparisonLib\ComparisonLib.csproj", "{1A9802BD-19DE-4471-B7B5-761F494C077C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComparisionLibTestProj", "ComparisionLibTestProj\ComparisionLibTestProj.csproj", "{63F499E9-EC34-4D02-B0E0-FDF434DAA2C2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ComparisionLibTestProj", "ComparisionLibTestProj\ComparisionLibTestProj.csproj", "{63F499E9-EC34-4D02-B0E0-FDF434DAA2C2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BatchProcessing", "BatchProcessing\BatchProcessing.csproj", "{6D2D83B4-9D03-4756-BF6E-9C09FE3AB249}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{63F499E9-EC34-4D02-B0E0-FDF434DAA2C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{63F499E9-EC34-4D02-B0E0-FDF434DAA2C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{63F499E9-EC34-4D02-B0E0-FDF434DAA2C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D2D83B4-9D03-4756-BF6E-9C09FE3AB249}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D2D83B4-9D03-4756-BF6E-9C09FE3AB249}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D2D83B4-9D03-4756-BF6E-9C09FE3AB249}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D2D83B4-9D03-4756-BF6E-9C09FE3AB249}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

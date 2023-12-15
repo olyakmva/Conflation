@@ -15,5 +15,11 @@
             LineFeatureIncludedAngleRepetitionRate = RLSA;
             LineFeatureVertexRepetitionRate = RLSC;
         }
+        public override string ToString()
+        {
+            return $"RepetitionRate={RepetitionRate};LineFeatureRepetitionRate={LineFeatureRepetitionRate}"+
+                $"LineIncludedAngleRepetitionRate={LineFeatureIncludedAngleRepetitionRate}"+
+                $"LineVertexRepetitionRate={LineFeatureVertexRepetitionRate}";
+        }
     }
 }

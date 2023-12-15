@@ -1,19 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
+﻿
 namespace KeyPointApp.Controls
 {
     public partial class ParamControl : UserControl
     {
-        public double Distance
+        public double BendDistance
         {
             get
             {
@@ -21,25 +11,21 @@ namespace KeyPointApp.Controls
             }
         }
 
-        public int PointRange
+        public int PointDistance
         {
             get
             {
                 return int.Parse(numericUpDown2.Text);
             }
         }
-        public double Angle
+        public double AngleGap
         {
             get
             {
-                double grad = double.Parse(angleNumericUpDown.Text);
-                return Math.Round((grad * Math.PI) / 180, 3);
+                return double.Parse(angleNumericUpDown.Text); 
             }
         }
-        public bool IsVector
-        {
-            get { return vectorCheckBox.Checked; }
-        }
+       
         public ParamControl()
         {
             InitializeComponent();

@@ -7,7 +7,7 @@ namespace ConflationLib
         private readonly MapData _mapData1;
         private readonly MapData _mapData2;
         private readonly double _lengthBetweenPoints;
-        public double AngleBetweenVectors { get; set; } = 0.2;
+       
         public List<ObjAccordance> objAccordanceList = new();
         public Dictionary<(int, int), List<MapKeyPoint>> result = new Dictionary<(int, int), List<MapKeyPoint>>(); 
         public BendCharacteristics(MapData mapA, MapData mapB, double length)
@@ -17,7 +17,7 @@ namespace ConflationLib
             _lengthBetweenPoints = length;
             
         }
-        public void Run(bool byLengthAndVector)
+        public void Run()
         {
             var bendProps1 = GetBendsCharacteristics(_mapData1);
             var bendProps2 = GetBendsCharacteristics(_mapData2);
@@ -96,7 +96,28 @@ namespace ConflationLib
             }
             return bendPropsDictionary;
         }
-
+        public void Save(string filename)
+        {
+            using (var sw = new StreamWriter(filename, true))
+            {
+                sw.WriteLine("Accordance;");
+                sw.WriteLine("Map1ObjId;Map2ObjId;AccordanceCoef;");
+                foreach (var objAccordance in objAccordanceList)
+                {
+                    if (objAccordance != null)
+                        sw.WriteLine(objAccordance);
+                }
+                sw.WriteLine("KeyPoints;");
+                sw.WriteLine("Map1ObjId;Map2ObjId;Point1;Point2;");
+                foreach(var pair in result)
+                {
+                    foreach(var pts in pair.Value)
+                    {
+                        sw.WriteLine("{0};{1};{2};{3};",pair.Key.Item1, pair.Key.Item2, pts.Point1, pts.Point2);
+                    }                     
+                }
+            }
+        }
 
         public void ExtractBend(ref int index, List<MapPoint> chain, out Bend b)
         {
