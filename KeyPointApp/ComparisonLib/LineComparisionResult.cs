@@ -10,16 +10,16 @@
 
         public LineMapComparison(double Rt, double RLSF, double RLSA, double RLSC)
         {
-            RepetitionRate = Rt;
-            LineFeatureRepetitionRate = RLSF;
-            LineFeatureIncludedAngleRepetitionRate = RLSA;
-            LineFeatureVertexRepetitionRate = RLSC;
+            RepetitionRate = Math.Round(Rt,1);
+            LineFeatureRepetitionRate = Math.Round(RLSF,1);
+            LineFeatureIncludedAngleRepetitionRate = Math.Round(RLSA, 1);
+            LineFeatureVertexRepetitionRate = Math.Round(RLSC, 1);
         }
         public override string ToString()
         {
-            return $"RepetitionRate={RepetitionRate};LineFeatureRepetitionRate={LineFeatureRepetitionRate}"+
-                $"LineIncludedAngleRepetitionRate={LineFeatureIncludedAngleRepetitionRate}"+
-                $"LineVertexRepetitionRate={LineFeatureVertexRepetitionRate}";
+            return $"RepetitionRate={RepetitionRate};LineFeatureRepetitionRate={LineFeatureRepetitionRate};"+
+                $"LineIncludedAngleRepetitionRate={LineFeatureIncludedAngleRepetitionRate};"+
+                $"LineVertexRepetitionRate={LineFeatureVertexRepetitionRate};";
         }
     }
 }
