@@ -7,7 +7,7 @@ namespace SupportLib
     [Serializable]
     public class MapData
     {
-        public Dictionary<int, List<MapPoint>> MapObjDictionary { get; }
+        public Dictionary<int, List<MapPoint>> MapObjDictionary { get; set; }
         public string FileName { get; set; }
         public int Count => GetAllVertices().Count;
         public string ColorName { get;  set; }

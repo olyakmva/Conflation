@@ -16,7 +16,7 @@ namespace ComparisonLib
         public double AzAngleCalculator(MapPoint mp1, MapPoint mp2) 
         {
             if(IsValueQuiteСlose(mp2.X, mp1.X))
-                return 0; // при равных иксах угол 0 ?
+                return 0; // при равных иксах угол 0 
             else
             {
                 double alfa = Math.Atan((mp2.Y - mp1.Y) / (mp2.X - mp1.X)) * 180 / Math.PI; //calculating angle between the line segment()two points P and the x-axis
@@ -47,7 +47,13 @@ namespace ComparisonLib
             y = y / points.Count();
             return new MapPoint(x, y,item.Id,1);//в ответ передаю новую точку, индекс оставляю и вес присвоила по умолчанию 0 и 1
         }
-        public PointMapComparison InfringementDetectionAlgorithmForPoint (MapData md1, MapData md2) //Do this method if geometry of map is Point
+        /// <summary>
+        /// Do this method if geometry of map is Point
+        /// </summary>
+        /// <param name="md1">MapData 1</param>
+        /// <param name="md2">MapData 2</param>
+        /// <returns></returns>
+        public PointMapComparison InfringementDetectionAlgorithmForPoint (MapData md1, MapData md2) 
         {            
             
             List<MapPoint> PointsOFMap1 = md1.GetAllVertices();  // Dr
@@ -66,7 +72,13 @@ namespace ComparisonLib
             double RepetitionRate = Math.Max(PointFeatureRepetitionRate, PointFeatureIncludedAngleRepetitionRate);
             return new PointMapComparison(RepetitionRate, PointFeatureRepetitionRate, PointFeatureIncludedAngleRepetitionRate);
         }
-        public LineMapComparison InfringementDetectionAlgorithmForLine(MapData md1, MapData md2) //Do this method if geometry of map is Line
+        /// <summary>
+        /// Do this method if geometry of map is Line
+        /// </summary>
+        /// <param name="md1">MapData 1</param>
+        /// <param name="md2">MapData 2</param>
+        /// <returns></returns>
+        public LineMapComparison InfringementDetectionAlgorithmForLine(MapData md1, MapData md2) 
         {
             double MinCapacityOfLines = Math.Min(md1.MapObjDictionary.Count, md2.MapObjDictionary.Count);   //Fbc
             double NumberOfRepeatedPositions = CountOfRepeatedLinesPositions(md1.GetMapObjItems(),md2.GetMapObjItems()); //Frc - Number of repeated features
@@ -88,7 +100,13 @@ namespace ComparisonLib
             double RepetitionRate = Math.Max(LineFeatureRepetitionRate,Math.Max(LineFeatureIincludedAngleRepetitionRate, LineFeatureVertexRepetitionRate));
             return (new LineMapComparison(RepetitionRate, LineFeatureRepetitionRate, LineFeatureIincludedAngleRepetitionRate, LineFeatureVertexRepetitionRate));
         }
-        public PolygonMapComparison InfringementDetectionAlgorithmForPolygon(MapData md1, MapData md2) //Do this method if geometry of map is Polygon
+        /// <summary>
+        /// Do this method if geometry of map is Polygon
+        /// </summary>
+        /// <param name="md1">MapData 1</param>
+        /// <param name="md2"> MapData 2</param>
+        /// <returns></returns>
+        public PolygonMapComparison InfringementDetectionAlgorithmForPolygon(MapData md1, MapData md2) 
         {
             
             List<MapPoint> MeanCenters1 = GetPolygonCenters(md1.GetMapObjItems()); //Mr
@@ -117,7 +135,13 @@ namespace ComparisonLib
         public double CountRepeatedIncludedAngles(List<double> ValueOfAngles1, List<double> ValueOfAngles2) //counting repeted angles from lists of two maps
         {
             double count = 0;
-            
+            // более мощное множество идет вторым
+            if(ValueOfAngles2.Count< ValueOfAngles1.Count)
+            {
+                var temp = ValueOfAngles1;
+                ValueOfAngles1 = ValueOfAngles2;
+                ValueOfAngles2 = temp;
+            }
             for(int i = 0; i<ValueOfAngles1.Count; i++)
             {
                 for(int j =0; j<ValueOfAngles2.Count; j++)
