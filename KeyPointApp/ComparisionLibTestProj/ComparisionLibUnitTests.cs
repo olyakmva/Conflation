@@ -39,5 +39,95 @@ namespace ComparisionLibTestProj
             Assert.True( Math.Abs(expected - NumberOfRepeatedPositions) < double.Epsilon);
 
         }
+        [Fact]
+        public void RightNumberOfRepeatedPoints()
+        {
+            var md1 = new MapData() { Geometry = GeometryType.Point };
+            int objId = 1;
+            const int objWeight = 1;
+            md1.MapObjDictionary.Add(objId, new List<MapPoint>()
+            {
+                new MapPoint(0, 0, objId, objWeight),
+                new MapPoint(10, 20, objId, objWeight),
+                //new MapPoint(11, 21, objId, objWeight), под комментарий добавила строки вызывающие проблемы
+                new MapPoint(50, 0, objId, objWeight),                
+                new MapPoint(7, 10.5, objId, objWeight)
+            });
+
+            var md2 = new MapData() { Geometry = GeometryType.Point };
+            objId = 2;
+            md2.MapObjDictionary.Add(objId, new List<MapPoint>
+            {
+                new MapPoint(15, 25, objId, objWeight),
+                new MapPoint(0, 0, objId, objWeight),
+                new MapPoint(37, 25, objId, objWeight),
+                new MapPoint(100, 7, objId, objWeight),
+            });
+            var algm = new ComparisionAlgorithm();
+
+            var NumberOfRepeatedPoints = algm.CountOfRepeatedPoints(md1.GetAllVertices(), md2.GetAllVertices());
+            double expected = 2;
+
+            Assert.True(Math.Abs(expected - NumberOfRepeatedPoints) < double.Epsilon);
+        }
+        [Fact]
+        public void RightNumberOfRepeatedCenters()
+        {
+            int objId = 1;
+            const int objWeight = 1;
+            var list1 = new List<MapPoint>()
+            {
+                new MapPoint(10, 20, objId, objWeight),
+                //new MapPoint(11, 21, objId, objWeight), точки разные но при сравнении она считается одинаковой с предыдущей,
+                // если в первом наборе 2 схожие точки и одна из них совпадёт со вторым набором. Алгоритм должен выдавать одно или два совпадения?
+                new MapPoint(50, 0, objId, objWeight),
+                new MapPoint(170, 10.5, objId, objWeight)
+            };
+            
+            objId = 2;
+            var list2 = new List<MapPoint>()
+            {
+                new MapPoint(0, 0, objId, objWeight),
+                new MapPoint(37, 25, objId, objWeight),
+                new MapPoint(100, 7, objId, objWeight),
+            };
+
+            var algm = new ComparisionAlgorithm();
+            double expected = 0;
+            var NumberOfRepeatedCentres = algm.CountRepeatedMeanCenters(list1, list2);
+            Assert.True(Math.Abs(expected - NumberOfRepeatedCentres) < double.Epsilon);
+
+            list1.Add(new MapPoint(0, 0, 1, objWeight));
+            list2.Add(new MapPoint(10, 20, 2, objWeight));
+            expected = 2;
+            NumberOfRepeatedCentres = algm.CountRepeatedMeanCenters(list1, list2);
+            Assert.True(Math.Abs(expected - NumberOfRepeatedCentres) < double.Epsilon);
+        }
+        [Fact]
+        public void RightZeroNumberOfRepeatedAngles()
+        {           
+            var list1 = new List<double>()
+            {
+                0,
+                10.5,
+                90,
+                164
+            };
+            var list2 = new List<double>()
+            {
+               91,
+               15,
+               35
+            };
+            var algm = new ComparisionAlgorithm();
+            double expected = 0;
+            var NumberOfRepeatedCentres = algm.CountRepeatedIncludedAngles(list1, list2);
+            Assert.True(Math.Abs(expected - NumberOfRepeatedCentres) < double.Epsilon);
+
+            list2.Add(0.5);
+            expected = 1;
+            NumberOfRepeatedCentres = algm.CountRepeatedIncludedAngles(list1, list2);
+            Assert.True(Math.Abs(expected - NumberOfRepeatedCentres) < double.Epsilon);
+        }
     }
 }

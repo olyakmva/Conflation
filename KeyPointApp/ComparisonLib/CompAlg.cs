@@ -162,8 +162,11 @@ namespace ComparisonLib
             {
                 foreach (MapPoint mp2 in ObjItems2)
                 {
-                    if (IsPointQuiteClose(mp1,mp2))
+                    if (IsPointQuiteClose(mp1, mp2))
+                    {
                         count++;
+                        break;
+                    }
                 }
             }
             return count;
@@ -175,8 +178,11 @@ namespace ComparisonLib
             {
                 for (int j = 0; j < centers2.Count; j++)
                 {
-                    if (IsPointQuiteClose(centers1[i],centers2[j]))
+                    if (IsPointQuiteClose(centers1[i], centers2[j]))
+                    {
                         count++;
+                        break;
+                    }
                 }
             }
             return count;
