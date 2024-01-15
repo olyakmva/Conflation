@@ -49,7 +49,6 @@ namespace ComparisionLibTestProj
             {
                 new MapPoint(0, 0, objId, objWeight),
                 new MapPoint(10, 20, objId, objWeight),
-                //new MapPoint(11, 21, objId, objWeight), под комментарий добавила строки вызывающие проблемы
                 new MapPoint(50, 0, objId, objWeight),                
                 new MapPoint(7, 10.5, objId, objWeight)
             });
@@ -77,9 +76,7 @@ namespace ComparisionLibTestProj
             const int objWeight = 1;
             var list1 = new List<MapPoint>()
             {
-                new MapPoint(10, 20, objId, objWeight),
-                //new MapPoint(11, 21, objId, objWeight), точки разные но при сравнении она считается одинаковой с предыдущей,
-                // если в первом наборе 2 схожие точки и одна из них совпадёт со вторым набором. Алгоритм должен выдавать одно или два совпадения?
+                new MapPoint(10, 20, objId, objWeight),                
                 new MapPoint(50, 0, objId, objWeight),
                 new MapPoint(170, 10.5, objId, objWeight)
             };
@@ -104,7 +101,7 @@ namespace ComparisionLibTestProj
             Assert.True(Math.Abs(expected - NumberOfRepeatedCentres) < double.Epsilon);
         }
         [Fact]
-        public void RightZeroNumberOfRepeatedAngles()
+        public void RightNumberOfRepeatedAngles()
         {           
             var list1 = new List<double>()
             {
@@ -128,6 +125,46 @@ namespace ComparisionLibTestProj
             expected = 1;
             NumberOfRepeatedCentres = algm.CountRepeatedIncludedAngles(list1, list2);
             Assert.True(Math.Abs(expected - NumberOfRepeatedCentres) < double.Epsilon);
+        }
+        [Fact]
+        public void RightCalculatingOfAngle()
+        {
+            var algm = new ComparisionAlgorithm();
+            int objId = 1;
+            const int objWeight = 1;
+            var expected = 225;
+            var real = algm.IncludedAngleCalculator(new MapPoint(0, 0,objId, objWeight), new MapPoint(1, 0, objId, objWeight), new MapPoint(2, 1, objId, objWeight));
+            Assert.True(Math.Abs(expected - real) < double.Epsilon);
+            real = algm.IncludedAngleCalculator(new MapPoint(0, 0, objId, objWeight), new MapPoint(1, 0, objId, objWeight), new MapPoint(2, -1, objId, objWeight));
+            Assert.True(Math.Abs(expected - real) < double.Epsilon);
+            real = algm.IncludedAngleCalculator(new MapPoint(2, -1, objId, objWeight), new MapPoint(1, 0, objId, objWeight), new MapPoint(0, 0, objId, objWeight));
+            Assert.True(Math.Abs(expected - real) < double.Epsilon);
+        }
+        [Fact]
+        public void RightNumberOfRepeatedCentres()
+        {
+            var md1 = new MapData() { Geometry = GeometryType.Polygon };
+            const int objWeight = 1;
+            md1.MapObjDictionary.Add(1, new List<MapPoint>()
+            {
+                new MapPoint(0, 0, 1, objWeight),
+                new MapPoint(10, 3, 1, objWeight),
+                new MapPoint(1, 8, 1, objWeight),
+               
+            });
+            md1.MapObjDictionary.Add(2, new List<MapPoint>()
+            {
+                new MapPoint(0, 0, 2, objWeight),
+                new MapPoint(5, 13, 2, objWeight),
+                new MapPoint(11, 8, 2, objWeight),
+
+            });           
+
+            var algm = new ComparisionAlgorithm();
+            double expected = 2;
+            var NumberOfRepeatedCentres = algm.GetPolygonCenters(md1.GetMapObjItems());
+            Assert.True(Math.Abs(expected - NumberOfRepeatedCentres.Count) < double.Epsilon);
+
         }
     }
 }

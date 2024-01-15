@@ -158,6 +158,12 @@ namespace ComparisonLib
         public double CountOfRepeatedPoints(List<MapPoint> ObjItems1, List<MapPoint> ObjItems2) //counting repered points 
         {
             double count = 0;
+            if (ObjItems2.Count < ObjItems1.Count)
+            {
+                var temp = ObjItems1;
+                ObjItems1 = ObjItems2;
+                ObjItems2 = temp;
+            }
             foreach (MapPoint mp1 in ObjItems1)
             {
                 foreach (MapPoint mp2 in ObjItems2)
@@ -174,6 +180,12 @@ namespace ComparisonLib
         public double CountRepeatedMeanCenters(List<MapPoint> centers1, List<MapPoint> centers2) //counting repered mean centers of polygon
         {
             double count = 0;
+            if (centers2.Count < centers1.Count)
+            {
+                var temp = centers1;
+                centers1 = centers2;
+                centers2 = temp;
+            }
             for (int i = 0; i < centers1.Count; i++)
             {
                 for (int j = 0; j < centers2.Count; j++)
@@ -190,7 +202,13 @@ namespace ComparisonLib
         public double CountOfRepeatedLinesPositions(List<MapObjItem> MapItems1, List<MapObjItem> MapItems2)
         {
             double count = 0;
-            foreach(MapObjItem mpObj1 in MapItems1)
+            if (MapItems2.Count < MapItems1.Count)
+            {
+                var temp = MapItems1;
+                MapItems1 = MapItems2;
+                MapItems2 = temp;
+            }
+            foreach (MapObjItem mpObj1 in MapItems1)
             {
                 foreach(MapObjItem mpObj2 in MapItems2)
                 {
