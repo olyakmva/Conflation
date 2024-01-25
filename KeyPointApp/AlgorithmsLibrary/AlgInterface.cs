@@ -25,7 +25,7 @@ namespace AlgorithmsLibrary
             get => _remainingPercent;
             set
             {
-                double p = 100 - value;
+                double p = 100 / value;
                 if (p > 100 || p < 1)
                     throw new ArgumentException("reduction percent must be between 1-99");
                 _remainingPercent = p;

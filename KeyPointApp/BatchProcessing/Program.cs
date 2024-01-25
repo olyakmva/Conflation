@@ -19,7 +19,7 @@ mapDatas.Add(inputMap);
 var compAlgm = new ComparisionAlgorithm
 {
     PointSimilarityMeasure = 100.0,
-    AngleSimilarityMeasure = 0.25
+    AngleSimilarityMeasure = 0.01
 };
 foreach(var pair in mapDatas[0].MapObjDictionary)
 {

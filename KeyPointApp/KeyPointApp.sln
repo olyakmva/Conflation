@@ -17,7 +17,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ComparisonLib", "Comparison
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ComparisionLibTestProj", "ComparisionLibTestProj\ComparisionLibTestProj.csproj", "{63F499E9-EC34-4D02-B0E0-FDF434DAA2C2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BatchProcessing", "BatchProcessing\BatchProcessing.csproj", "{6D2D83B4-9D03-4756-BF6E-9C09FE3AB249}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BatchProcessing", "BatchProcessing\BatchProcessing.csproj", "{6D2D83B4-9D03-4756-BF6E-9C09FE3AB249}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleAppForAttacks", "ConsoleAppForAttacks\ConsoleAppForAttacks.csproj", "{39635EDB-628B-406C-AC6B-CC92597EF44C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +59,10 @@ Global
 		{6D2D83B4-9D03-4756-BF6E-9C09FE3AB249}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6D2D83B4-9D03-4756-BF6E-9C09FE3AB249}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6D2D83B4-9D03-4756-BF6E-9C09FE3AB249}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39635EDB-628B-406C-AC6B-CC92597EF44C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39635EDB-628B-406C-AC6B-CC92597EF44C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39635EDB-628B-406C-AC6B-CC92597EF44C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39635EDB-628B-406C-AC6B-CC92597EF44C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

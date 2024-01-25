@@ -51,7 +51,7 @@ namespace AlgorithmsLibrary
         public void Init(MapData initMap, SimplificationAlgmParameters options)
         {
             _initPointNumber = initMap.Count;
-            _neededPointNumber = Convert.ToInt32(Math.Round((options.RemainingPercent * _initPointNumber) / 100));
+            _neededPointNumber = Convert.ToInt32(Math.Round( _initPointNumber * options.RemainingPercent/100));
             _errorValue = Convert.ToInt32(Math.Round(_initPointNumber * options.PointNumberGap / 100));
             if(options.Tolerance <1)
                 options.Tolerance=100;
