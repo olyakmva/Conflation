@@ -24,7 +24,8 @@ ISimplificationAlgm[] algms =
     };
 var ReducedValues = new double[] { 2 };
 string applicationPath = Environment.CurrentDirectory;
-var dataPath = Path.Combine(applicationPath, "Data");
+//var dataPath = Path.Combine(applicationPath, "data\\coast");
+var dataPath = "C:\\MyKursovaya\\Conflation\\KeyPointApp\\Data\\Coasts";
 DirectoryInfo dir = new DirectoryInfo(dataPath);
 var dataFiles = dir.GetFiles("*.shp");
 
@@ -65,7 +66,7 @@ foreach (var file in dataFiles)
             };
             var result = compAlgm.InfringementDetectionAlgorithmForLine(inputMap, map);
             st.Stop();
-            sw.Write("{0}; {1} ", st.ElapsedMilliseconds, result);
+            sw.Write("{0}; {1}; {2} ", file.Name, st.ElapsedMilliseconds, result);
             st.Reset();
             Console.WriteLine("{0} {1}",inputMap.Count, map.Count);
         }
