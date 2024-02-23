@@ -19,10 +19,7 @@ namespace AlgorithmsLibrary
             this.X = other.X;
             this.Y = other.Y;
         }
-        public MPoint()
-        {
-
-        }
+        public MPoint() : this(0, 0) { }
         public MPoint(double x, double y)
         {
             X = x;
