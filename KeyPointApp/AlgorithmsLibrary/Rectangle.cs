@@ -12,7 +12,7 @@ namespace AlgorithmsLibrary
         /// <summary>
         /// LowLeft, UpLeft, UpRight, LowRight points of Rectangle
         /// </summary>
-        public Point LowLeft, UpLeft, UpRight, LowRight;
+        public MPoint LowLeft, UpLeft, UpRight, LowRight;
 
         /// <summary>
         /// Side length of Rectangle
@@ -28,7 +28,7 @@ namespace AlgorithmsLibrary
         /// <param name="B">Upleft point</param>
         /// <param name="C">UpRight point</param>
         /// <param name="D">LowRight point</param>
-        public Rectangle(Point A, Point B, Point C, Point D)
+        public Rectangle(MPoint A, MPoint B, MPoint C, MPoint D)
         {
             LowLeft = A;
             UpLeft = B;
@@ -82,7 +82,7 @@ namespace AlgorithmsLibrary
         /// </summary>
         /// <param name="point"></param>
         /// <returns></returns>
-        public bool IsIn(Point point)
+        public bool IsIn(MPoint point)
         {
             double epsilon = 1.0 / Math.Pow(10, 8);
             return (this.LowLeft.X < point.X &&
@@ -117,9 +117,9 @@ namespace AlgorithmsLibrary
         /// Method of receiving point of Rectangle
         /// </summary>
         /// <returns></returns>
-        public List<Point> GetPoints()
+        public List<MPoint> GetPoints()
         {
-            return new List<Point>(new[] { LowLeft, UpLeft, UpRight, LowRight });
+            return new List<MPoint>(new[] { LowLeft, UpLeft, UpRight, LowRight });
         }
         #endregion
     }

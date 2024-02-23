@@ -9,6 +9,7 @@
 	<ItemGroup>
 		<PackageReference Include="DotSpatial.Data" Version="4.0.656" />
 		<PackageReference Include="DotSpatial.Serialization" Version="4.0.656" />
+		<ProjectReference Include="..\AlgorithmsLibrary\AlgorithmsLibrary.csproj" />
 		<ProjectReference Include="..\SupportLib\SupportLib.csproj" />
 	</ItemGroup>
 
