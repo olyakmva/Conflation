@@ -20,5 +20,6 @@ namespace FrequencyAnalysisLibTestProject
             FreqAlg freqAlg = new FreqAlg(map);
             Assert.Equal(freqAlg.Curr_map, map);
         }
+
     }
 }
