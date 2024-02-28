@@ -19,7 +19,14 @@ namespace SupportLib
            
             ColorName = Colors.GetNext();
         }
-        
+
+        public MapData(GeometryType type)
+        {
+            MapObjDictionary = new Dictionary<int, List<MapPoint>>();
+            Geometry = type;
+            ColorName = Colors.GetNext();
+        }
+
         public List<MapPoint> GetAllVertices()
         {
             var resultList = new List<MapPoint>();
