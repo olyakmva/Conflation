@@ -15,6 +15,8 @@ namespace SupportLib
             MapLayers = new List<MapData>();
             Xmin = double.MaxValue;
             Ymin = Xmin;
+            Xmax = double.MinValue;
+            Ymax = Xmax;
             Colors.Init();
         }
         

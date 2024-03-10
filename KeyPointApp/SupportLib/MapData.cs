@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization.Formatters.Binary;
+﻿using NetTopologySuite.Index.HPRtree;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace SupportLib
 {
@@ -74,6 +75,31 @@ namespace SupportLib
                 items.Add(item);
             }
             return items;
+        }
+        public MapData MultiplyOffsetMapData(double offset = 0, double mul_offset = 1)
+        {
+            var result = new MapData();
+            result.FileName = FileName + "_Clone";
+            result.ColorName = ColorName;
+            result.Geometry = Geometry;
+
+            foreach (var obj in MapObjDictionary)
+            {
+                var tmp = new List<MapPoint>();
+
+                foreach (var point in obj.Value)
+                {
+                    tmp.Add(new MapPoint(point.X, point.Y, point.Id, point.Weight));
+                }
+
+                foreach (var t in tmp)
+                {
+                    t.X = t.X * mul_offset + offset;
+                    t.Y = t.Y * mul_offset + offset;
+                }
+                result.MapObjDictionary.Add(obj.Key, tmp);
+            }
+            return result;
         }
     }
 }
