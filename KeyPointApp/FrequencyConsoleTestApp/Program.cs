@@ -1,8 +1,9 @@
-﻿using DotSpatial.Data;
+﻿using AlgorithmsLibrary;
+using DotSpatial.Data;
 using FrequencyAnalysisLib;
 using SupportLib;
 
-string path = "D:\\Курсовая 5 курс\\Conflation\\KeyPointApp\\Data\\Voronez";
+string path = "..\\..\\..\\..\\Data\\Voronez";
 //var mapDatas = new List<MapData>();
 string shapeFileName = Path.Combine(path, "hdrlin500_utf_merg.shp");
 var inputShape = FeatureSet.Open(shapeFileName);
@@ -49,5 +50,14 @@ DataAnalysis d = new DataAnalysis();
 
 Console.WriteLine();
 Console.WriteLine(d.Analysis(watermark, offset_watermark));
+
+ISimplificationAlgm algm = new DouglasPeuckerAlgmWithCriterion(new PointPercentCriterion());
+var p = new SimplificationAlgmParameters();
+p.Tolerance = 100;
+p.RemainingPercent = 2.0;//будет в два раза меньше точек - на 50%, если поставить 4.0 будет в 4 раза меньше точек
+algm.Options = p;
+algm.Options.PointNumberGap = 2.0;
+var simplifyingMapData = inputMap.Clone();
+algm.Run(simplifyingMapData);
 
 Console.ReadKey();
