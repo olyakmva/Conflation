@@ -9,19 +9,19 @@ namespace ConflationLib
         /// <summary>
         /// список вершин в последовательности, в которой они идут в изгибе
         /// </summary>
-        public List<MapPoint> NodeList { set; get; }
+        public List<MapPoint> PointsList { set; get; }
 
         #region Constructors
 
         public Bend()
         {
-            NodeList = new List<MapPoint>();
+            PointsList = new List<MapPoint>();
         }
 
         public Bend(List<MapPoint> vert)
             : this()
         {
-            NodeList.AddRange(vert);
+            PointsList.AddRange(vert);
         }
 
         #endregion
@@ -32,16 +32,16 @@ namespace ConflationLib
         /// <returns>площадь изгиба</returns>
         public double Area()
         {
-            if (NodeList.Count < 3)
+            if (PointsList.Count < 3)
                 return 0;
 
             double result = 0;
-            for (var i = 0; i < NodeList.Count - 1; i++)
+            for (var i = 0; i < PointsList.Count - 1; i++)
             {
-                result += (NodeList[i].X + NodeList[i + 1].X) * (NodeList[i].Y - NodeList[i + 1].Y);
+                result += (PointsList[i].X + PointsList[i + 1].X) * (PointsList[i].Y - PointsList[i + 1].Y);
             }
 
-            result += (NodeList[NodeList.Count - 1].X + NodeList[0].X) * (NodeList[NodeList.Count - 1].Y - NodeList[0].Y);
+            result += (PointsList[PointsList.Count - 1].X + PointsList[0].X) * (PointsList[PointsList.Count - 1].Y - PointsList[0].Y);
 
             return Math.Abs(result / 2);
         }
@@ -52,7 +52,7 @@ namespace ConflationLib
         /// <returns>периметр изгиба, включая основание</returns>
         public double Perimeter()
         {
-            if (NodeList.Count < 3)
+            if (PointsList.Count < 3)
                 return 0;
 
             return Length() + BaseLineLength();
@@ -63,22 +63,22 @@ namespace ConflationLib
         /// <returns>длина</returns>
         public double Length()
         {
-            if (NodeList.Count < 3)
+            if (PointsList.Count < 3)
                 return 0;
 
             double result = 0;
 
-            for (var i = 0; i < NodeList.Count - 1; i++)
+            for (var i = 0; i < PointsList.Count - 1; i++)
             {
-                result += Math.Sqrt((NodeList[i + 1].X - NodeList[i].X) * (NodeList[i + 1].X - NodeList[i].X) + (NodeList[i + 1].Y - NodeList[i].Y) * (NodeList[i + 1].Y - NodeList[i].Y));
+                result += Math.Sqrt((PointsList[i + 1].X - PointsList[i].X) * (PointsList[i + 1].X - PointsList[i].X) + (PointsList[i + 1].Y - PointsList[i].Y) * (PointsList[i + 1].Y - PointsList[i].Y));
             }
             return result;
         }
         public VectorLib.Vector? GetBaseVector()
         {
-            if (NodeList.Count < 3)
+            if (PointsList.Count < 3)
                 return null;
-            return new VectorLib.Vector(NodeList[0], NodeList[NodeList.Count - 1]);
+            return new VectorLib.Vector(PointsList[0], PointsList[PointsList.Count - 1]);
         }
         /// <summary>
         /// подсчёт индекса компактности
@@ -86,7 +86,7 @@ namespace ConflationLib
         /// <returns>индекс компактности</returns>
         public double CompactIndex()
         {
-            if (NodeList.Count < 3)
+            if (PointsList.Count < 3)
                 return 0;
 
             return 4 * Math.PI * Area() / Math.Pow(Perimeter(), 2);
@@ -94,17 +94,17 @@ namespace ConflationLib
 
         public double BaseLineLength()
         {
-            if (NodeList.Count < 2)
+            if (PointsList.Count < 2)
                 return 0;
-            return Math.Sqrt((NodeList[NodeList.Count - 1].X - NodeList[0].X) * (NodeList[NodeList.Count - 1].X - NodeList[0].X) + (NodeList[NodeList.Count - 1].Y - NodeList[0].Y) * (NodeList[NodeList.Count - 1].Y - NodeList[0].Y));
+            return Math.Sqrt((PointsList[PointsList.Count - 1].X - PointsList[0].X) * (PointsList[PointsList.Count - 1].X - PointsList[0].X) + (PointsList[PointsList.Count - 1].Y - PointsList[0].Y) * (PointsList[PointsList.Count - 1].Y - PointsList[0].Y));
         }
 
         public double[] BendMiddlePoint()
         {
-            if (NodeList.Count == 0)
+            if (PointsList.Count == 0)
                 return new double[2];
 
-            return new[] { (NodeList[0].X + NodeList[NodeList.Count - 1].X) / 2, (NodeList[0].Y + NodeList[NodeList.Count - 1].Y) / 2 };
+            return new[] { (PointsList[0].X + PointsList[PointsList.Count - 1].X) / 2, (PointsList[0].Y + PointsList[PointsList.Count - 1].Y) / 2 };
         }
 
         /// <summary>
@@ -113,17 +113,17 @@ namespace ConflationLib
         /// <returns>индекс пика изгиба</returns>
         public int PeakIndex()
         {
-            if (NodeList.Count == 0)
+            if (PointsList.Count == 0)
                 return 0;
 
-            MapPoint begin = NodeList[0];
-            MapPoint end = NodeList[NodeList.Count - 1];
+            MapPoint begin = PointsList[0];
+            MapPoint end = PointsList[PointsList.Count - 1];
             var peakIndex = 0;
             double maxSum = 0;
-            for (var i = 1; i < NodeList.Count - 1; i++)
+            for (var i = 1; i < PointsList.Count - 1; i++)
             {
-                var tempSum = Math.Sqrt(Math.Pow((NodeList[i].X - begin.X), 2) + Math.Pow((NodeList[i].Y - begin.Y), 2)) +
-                                 Math.Sqrt(Math.Pow((NodeList[i].X - end.X), 2) + Math.Pow((NodeList[i].Y - end.Y), 2));
+                var tempSum = Math.Sqrt(Math.Pow((PointsList[i].X - begin.X), 2) + Math.Pow((PointsList[i].Y - begin.Y), 2)) +
+                                 Math.Sqrt(Math.Pow((PointsList[i].X - end.X), 2) + Math.Pow((PointsList[i].Y - end.Y), 2));
 
                 if (!(tempSum > maxSum)) continue;
                 maxSum = tempSum;
@@ -137,9 +137,9 @@ namespace ConflationLib
         /// <returns>высота</returns>
         public double GetHeight()
         {
-            var baseLine = new Line(NodeList[0], NodeList[NodeList.Count - 1]);
+            var baseLine = new Line(PointsList[0], PointsList[PointsList.Count - 1]);
             int peakIndex = PeakIndex();
-            return baseLine.GetDistance(NodeList[peakIndex]);
+            return baseLine.GetDistance(PointsList[peakIndex]);
         }
         /// <summary>
         /// вычисление ширины изгиба
@@ -147,57 +147,57 @@ namespace ConflationLib
         /// <returns> ширина</returns>
         public double GetWidth()
         {
-            if (NodeList.Count < 3)
+            if (PointsList.Count < 3)
                 return 0;
 
-            var baseLine = new Line(NodeList[0], NodeList[NodeList.Count - 1]);
+            var baseLine = new Line(PointsList[0], PointsList[PointsList.Count - 1]);
             //  проведем перпендикулярную прямую
-            var leftLine = baseLine.GetPerpendicularLine(NodeList[0]);
-            var leftPoint = NodeList[0];
+            var leftLine = baseLine.GetPerpendicularLine(PointsList[0]);
+            var leftPoint = PointsList[0];
 
-            if (NodeList.Count == 3)
+            if (PointsList.Count == 3)
             {
-                leftPoint = baseLine.GetPerpendicularFoundationPoint(NodeList[1]);
-                leftLine = new Line(NodeList[1], leftPoint);
-                if (leftLine.GetSign(NodeList[0]) != leftLine.GetSign(NodeList[NodeList.Count - 1]))
+                leftPoint = baseLine.GetPerpendicularFoundationPoint(PointsList[1]);
+                leftLine = new Line(PointsList[1], leftPoint);
+                if (leftLine.GetSign(PointsList[0]) != leftLine.GetSign(PointsList[PointsList.Count - 1]))
                 {
-                    return NodeList[0].DistanceToVertex(NodeList[2]);
+                    return PointsList[0].DistanceToVertex(PointsList[2]);
                 }
-                return Math.Max(NodeList[0].DistanceToVertex(leftPoint), NodeList[2].DistanceToVertex(leftPoint));
+                return Math.Max(PointsList[0].DistanceToVertex(leftPoint), PointsList[2].DistanceToVertex(leftPoint));
             }
 
-            if (leftLine.GetSign(NodeList[1]) * leftLine.GetSign(NodeList[NodeList.Count - 1]) < 0)
+            if (leftLine.GetSign(PointsList[1]) * leftLine.GetSign(PointsList[PointsList.Count - 1]) < 0)
             {
-                leftPoint = baseLine.GetPerpendicularFoundationPoint(NodeList[1]);
+                leftPoint = baseLine.GetPerpendicularFoundationPoint(PointsList[1]);
                 if (baseLine.GetSign(leftPoint) != 0)
-                    leftLine = new Line(NodeList[1], leftPoint);
-                else leftLine = baseLine.GetPerpendicularLine(NodeList[1]);
+                    leftLine = new Line(PointsList[1], leftPoint);
+                else leftLine = baseLine.GetPerpendicularLine(PointsList[1]);
                 var i = 2;
-                while (i < NodeList.Count)
+                while (i < PointsList.Count)
                 {
-                    if (leftLine.GetSign(NodeList[0]) == leftLine.GetSign(NodeList[i]))
+                    if (leftLine.GetSign(PointsList[0]) == leftLine.GetSign(PointsList[i]))
                     {
                         i++;
                     }
                     else
                     {
-                        leftPoint = baseLine.GetPerpendicularFoundationPoint(NodeList[i]);
+                        leftPoint = baseLine.GetPerpendicularFoundationPoint(PointsList[i]);
                         if (baseLine.GetSign(leftPoint) != 0)
-                            leftLine = new Line(NodeList[i], leftPoint);
-                        else leftLine = baseLine.GetPerpendicularLine(NodeList[i]);
+                            leftLine = new Line(PointsList[i], leftPoint);
+                        else leftLine = baseLine.GetPerpendicularLine(PointsList[i]);
                         i++;
                     }
                 }
             }
             // то же самое справа
-            var endIndex = NodeList.Count - 1;
+            var endIndex = PointsList.Count - 1;
 
-            var max = leftPoint.DistanceToVertex(NodeList[endIndex]);
+            var max = leftPoint.DistanceToVertex(PointsList[endIndex]);
             int j = endIndex - 1;
             while (j > 0)
             {
 
-                var p = baseLine.GetPerpendicularFoundationPoint(NodeList[j]);
+                var p = baseLine.GetPerpendicularFoundationPoint(PointsList[j]);
                 var d = leftPoint.DistanceToVertex(p);
                 if (d > max)
                     max = d;
@@ -238,10 +238,10 @@ namespace ConflationLib
         public void ExaggerateRadial(double factor)
         {
             var c = BendMiddlePoint();
-            for (var i = 1; i < NodeList.Count - 1; i++)
+            for (var i = 1; i < PointsList.Count - 1; i++)
             {
-                NodeList[i].X = (1 - factor) * c[0] + factor * NodeList[i].X;
-                NodeList[i].Y = (1 - factor) * c[1] + factor * NodeList[i].Y;
+                PointsList[i].X = (1 - factor) * c[0] + factor * PointsList[i].X;
+                PointsList[i].Y = (1 - factor) * c[1] + factor * PointsList[i].Y;
             }
         }
 
@@ -254,11 +254,11 @@ namespace ConflationLib
         public void CombineWith(Bend nextBend)
         {
             double factor = 1.2;
-            MapPoint baseVertex = nextBend.NodeList[0];
+            MapPoint baseVertex = nextBend.PointsList[0];
             int peakIndex = PeakIndex();
-            MapPoint thisPeak = NodeList[peakIndex];
+            MapPoint thisPeak = PointsList[peakIndex];
             int nextPeakInd = nextBend.PeakIndex();
-            MapPoint nextPeak = nextBend.NodeList[nextPeakInd];
+            MapPoint nextPeak = nextBend.PointsList[nextPeakInd];
             var centerX = (thisPeak.X + nextPeak.X) / 2;
             var centerY = (thisPeak.Y + nextPeak.Y) / 2;
 
@@ -267,12 +267,12 @@ namespace ConflationLib
 
             baseVertex.X = x;
             baseVertex.Y = y;
-            NodeList.RemoveRange(peakIndex + 1, NodeList.Count - peakIndex - 1);
-            NodeList.Add(baseVertex);
+            PointsList.RemoveRange(peakIndex + 1, PointsList.Count - peakIndex - 1);
+            PointsList.Add(baseVertex);
 
-            for (int i = nextPeakInd; i < nextBend.NodeList.Count; i++)
+            for (int i = nextPeakInd; i < nextBend.PointsList.Count; i++)
             {
-                NodeList.Add(nextBend.NodeList[i]);
+                PointsList.Add(nextBend.PointsList[i]);
             }
         }
 
@@ -283,11 +283,11 @@ namespace ConflationLib
         public void CombineWith2(Bend nextNextBend)
         {
             double factor = 1.2;
-            MapPoint baseVertex = nextNextBend.NodeList[0];
+            MapPoint baseVertex = nextNextBend.PointsList[0];
             int peakIndex = PeakIndex();
-            MapPoint thisPeak = NodeList[peakIndex];
+            MapPoint thisPeak = PointsList[peakIndex];
             int nextPeakInd = nextNextBend.PeakIndex();
-            MapPoint nextPeak = nextNextBend.NodeList[nextPeakInd];
+            MapPoint nextPeak = nextNextBend.PointsList[nextPeakInd];
             var centerX = (thisPeak.X + nextPeak.X) / 2;
             var centerY = (thisPeak.Y + nextPeak.Y) / 2;
 
@@ -296,12 +296,12 @@ namespace ConflationLib
 
             baseVertex.X = x;
             baseVertex.Y = y;
-            NodeList.RemoveRange(peakIndex + 1, NodeList.Count - peakIndex - 1);
-            NodeList.Add(baseVertex);
+            PointsList.RemoveRange(peakIndex + 1, PointsList.Count - peakIndex - 1);
+            PointsList.Add(baseVertex);
 
-            for (int i = nextPeakInd; i < nextNextBend.NodeList.Count; i++)
+            for (int i = nextPeakInd; i < nextNextBend.PointsList.Count; i++)
             {
-                NodeList.Add(nextNextBend.NodeList[i]);
+                PointsList.Add(nextNextBend.PointsList[i]);
             }
         }
 

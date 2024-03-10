@@ -1,4 +1,6 @@
-﻿using SupportLib;
+﻿using AlgorithmsLibrary;
+using SupportLib;
+using System.Text;
 
 namespace ConflationLib
 {
@@ -7,15 +9,14 @@ namespace ConflationLib
         private readonly MapData _mapData1;
         private readonly MapData _mapData2;
         private readonly double _lengthBetweenPoints;
-       
+              
         public List<ObjAccordance> objAccordanceList = new();
         public Dictionary<(int, int), List<MapKeyPoint>> result = new Dictionary<(int, int), List<MapKeyPoint>>(); 
         public BendCharacteristics(MapData mapA, MapData mapB, double length)
         {
             _mapData1 = mapA;
             _mapData2 = mapB;
-            _lengthBetweenPoints = length;
-            
+            _lengthBetweenPoints = length;           
         }
         public void Run()
         {
@@ -31,12 +32,16 @@ namespace ConflationLib
                         var bends2 = pv2.Value;
                         foreach (var b2 in bends2)
                         {
-                            if (b1.PeakPoint.DistanceToVertex(b2.PeakPoint) > _lengthBetweenPoints)
-                                continue;
-                            
                             if (b1.Orientation != b2.Orientation)
                                 continue;
-                            if(!result.ContainsKey((pv1.Key,pv2.Key)))
+                            //double area = Math.Min(b1.Area, b2.Area)/2;
+                            //if (Math.Abs(b1.Area - b2.Area) > area)
+                            //    continue;
+                            //if (HausdorfDistance.Get(b1.PointsList, b2.PointsList) > _lengthBetweenPoints)
+                            //    continue;
+                            if (b1.PeakPoint.DistanceToVertex(b2.PeakPoint) > _lengthBetweenPoints)
+                                continue;
+                            if (!result.ContainsKey((pv1.Key,pv2.Key)))
                             {
                                   result.Add((pv1.Key, pv2.Key), new List<MapKeyPoint>());
                                 
@@ -83,14 +88,15 @@ namespace ConflationLib
                 {
                     ExtractBend(ref index, chain, out Bend b);
                     int peakIndx = b.PeakIndex();
-                    
-                        var bendProps = new BendProperty
-                        {
-                            StartPoint = b.NodeList[0],
-                            PeakPoint = b.NodeList[peakIndx],
-                            Orientation = Orientation(b.NodeList[0], b.NodeList[1], b.NodeList[2])
-                        };
-                        bendPropsDictionary[obj.Key].Add(bendProps);
+
+                    var bendProps = new BendProperty
+                    {
+                        PointsList = b.PointsList,
+                        PeakPoint = b.PointsList[peakIndx],
+                        Orientation = Orientation(b.PointsList[0], b.PointsList[1], b.PointsList[2]),
+                        Area = Math.Round(b.Area(), 2)
+                    };
+                    bendPropsDictionary[obj.Key].Add(bendProps);
                     
                 }
             }
@@ -98,24 +104,28 @@ namespace ConflationLib
         }
         public void Save(string filename)
         {
-            using (var sw = new StreamWriter(filename, true))
+            using (var sw = new StreamWriter(filename, true, Encoding.GetEncoding(1251)))
             {
                 sw.WriteLine("Accordance;");
-                sw.WriteLine("Map1ObjId;Map2ObjId;AccordanceCoef;");
+                sw.WriteLine("Map1ObjId;Map2ObjId;AccordanceCoef;Name1;Name2;");
                 foreach (var objAccordance in objAccordanceList)
                 {
                     if (objAccordance != null)
-                        sw.WriteLine(objAccordance);
-                }
-                sw.WriteLine("KeyPoints;");
-                sw.WriteLine("Map1ObjId;Map2ObjId;Point1;Point2;");
-                foreach(var pair in result)
-                {
-                    foreach(var pts in pair.Value)
                     {
-                        sw.WriteLine("{0};{1};{2};{3};",pair.Key.Item1, pair.Key.Item2, pts.Point1, pts.Point2);
-                    }                     
+                        sw.Write(objAccordance);
+                        sw.Write(_mapData1.MapObjNameDictionary[objAccordance.Map1ObjId] + ";");
+                        sw.WriteLine(_mapData2.MapObjNameDictionary[objAccordance.Map2ObjId] + ";");
+                    }
                 }
+                //sw.WriteLine("KeyPoints;");
+                //sw.WriteLine("Map1ObjId;Map2ObjId;Point1;Point2;");
+                //foreach(var pair in result)
+                //{
+                //    foreach(var pts in pair.Value)
+                //    {
+                //        sw.WriteLine("{0};{1};{2};{3};",pair.Key.Item1, pair.Key.Item2, pts.Point1, pts.Point2);
+                //    }                     
+                //}
             }
         }
 
@@ -123,20 +133,20 @@ namespace ConflationLib
         {
             int firstIndex = index;
             b = new Bend();
-            b.NodeList.Add(chain[index]);
-            b.NodeList.Add(chain[index + 1]);
-            b.NodeList.Add(chain[index + 2]);
+            b.PointsList.Add(chain[index]);
+            b.PointsList.Add(chain[index + 1]);
+            b.PointsList.Add(chain[index + 2]);
             index += 3;
-            var bendOrient = Orientation(b.NodeList[0], b.NodeList[1], b.NodeList[2]);
+            var bendOrient = Orientation(b.PointsList[0], b.PointsList[1], b.PointsList[2]);
 
             //ищем конец изгиба
             while (index < chain.Count)
             {
-                var orient = Orientation(b.NodeList[^2],
-                    b.NodeList[^1], chain[index]);
+                var orient = Orientation(b.PointsList[^2],
+                    b.PointsList[^1], chain[index]);
                 if (orient != bendOrient)
                     break;
-                b.NodeList.Add(chain[index]);
+                b.PointsList.Add(chain[index]);
                 index++;
             }
             index--;
@@ -150,7 +160,7 @@ namespace ConflationLib
                         Math.Pow(chain[firstIndex].Y - chain[index + 1].Y, 2)))
                 {
                     index++;
-                    b.NodeList.Add(chain[index]);
+                    b.PointsList.Add(chain[index]);
                 }
                 else
                 {

@@ -5,6 +5,7 @@ using SupportLib;
 using ConflationLib;
 using KeyPointApp.Controls;
 using ComparisonLib;
+using System.Text;
 
 namespace KeyPointApp
 {
@@ -205,13 +206,14 @@ namespace KeyPointApp
                 bendCharacteristics.Run();
                 keyPoints = bendCharacteristics.result;
                 bendCharacteristics.Save("rate.txt");
-                var compAlgm = new ComparisionAlgorithm
-                {
-                    PointSimilarityMeasure = paramControl.PointDistance,
-                    AngleSimilarityMeasure = paramControl.AngleGap
-                };
-                var result = compAlgm.InfringementDetectionAlgorithmForLine(mapDatas[0], mapDatas[1]);
-                Save("rate.txt", result);
+                
+                //var compAlgm = new ComparisionAlgorithm
+                //{
+                //    PointSimilarityMeasure = paramControl.PointDistance,
+                //    AngleSimilarityMeasure = paramControl.AngleGap
+                //};
+                //var result = compAlgm.InfringementDetectionAlgorithmForLine(mapDatas[0], mapDatas[1]);
+                //Save("rate.txt", result);
             }
             mapPictureBox.Invalidate();
 

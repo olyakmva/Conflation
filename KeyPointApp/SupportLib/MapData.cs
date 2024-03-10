@@ -8,7 +8,8 @@ namespace SupportLib
     public class MapData
     {
         public Dictionary<int, List<MapPoint>> MapObjDictionary { get; set; }
-        public string FileName { get; set; }
+        public Dictionary<int,string> MapObjNameDictionary { get; set; }
+        public string FileName { get; set; } = string.Empty;
         public int Count => GetAllVertices().Count;
         public string ColorName { get;  set; }
         public GeometryType Geometry {  get; set; }
@@ -16,15 +17,13 @@ namespace SupportLib
         public MapData()
         {
             MapObjDictionary = new Dictionary<int, List<MapPoint>>();
-           
+            MapObjNameDictionary = new Dictionary<int, string>();
             ColorName = Colors.GetNext();
         }
 
-        public MapData(GeometryType type)
+        public MapData(GeometryType type) :this()
         {
-            MapObjDictionary = new Dictionary<int, List<MapPoint>>();
             Geometry = type;
-            ColorName = Colors.GetNext();
         }
 
         public List<MapPoint> GetAllVertices()
@@ -76,7 +75,5 @@ namespace SupportLib
             }
             return items;
         }
-
-
     }
 }

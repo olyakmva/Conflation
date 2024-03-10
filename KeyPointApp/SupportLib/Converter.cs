@@ -1,5 +1,6 @@
 ﻿using DotSpatial.Data;
 using NetTopologySuite.Geometries;
+using System.Text;
 
 
 namespace SupportLib
@@ -40,7 +41,10 @@ namespace SupportLib
             foreach (var item in list)
             {
                 var shape = item.ToShape();
-                int fid = Convert.ToInt32(shape.Attributes[1]);
+
+                int fid = Convert.ToInt32(shape.Attributes[0]);
+                string name = shape.Attributes[2].ToString() ?? string.Empty;
+
                 var points = new List<MapPoint>();
                 for(var t=0; t< shape.Vertices.Length;t+=2)
                 {
@@ -48,6 +52,7 @@ namespace SupportLib
                     points.Add(p);
                 }
                 map.MapObjDictionary.Add(fid, points);
+                map.MapObjNameDictionary.Add(fid, name);
             }
             return map;
         }

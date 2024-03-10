@@ -1,5 +1,4 @@
-﻿// 
-using ComparisonLib;
+﻿using ComparisonLib;
 using DotSpatial.Data;
 using SupportLib;
 
@@ -8,6 +7,7 @@ string path = "g:\\Каталог Оли\\Nauka\\MapGeneralization\\Grant2022\\C
 var mapDatas = new List<MapData>();
 string shapeFileName = Path.Combine(path,"hdrlin500_utf_merg.shp");
 var inputShape = FeatureSet.Open(shapeFileName);
+
 var inputMap = Converter.ToMapData(inputShape);
 mapDatas.Add(inputMap);
 shapeFileName = Path.Combine(path, "hdrlin1000utfmerg.shp");
@@ -35,9 +35,7 @@ foreach(var pair in mapDatas[0].MapObjDictionary)
             var s = string.Format("{0}; {1} ; {2}", pair.Key, pair2.Key, result);
             Save("rate.txt", s);
         }
-
     }
-
 }
 
 void Save(string fileName, string s)
