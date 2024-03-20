@@ -1,5 +1,4 @@
-﻿using NetTopologySuite.Index.HPRtree;
-using System.Runtime.Serialization.Formatters.Binary;
+﻿using System.Runtime.Serialization.Formatters.Binary;
 
 namespace SupportLib
 {
