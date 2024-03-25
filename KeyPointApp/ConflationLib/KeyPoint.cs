@@ -15,7 +15,7 @@ namespace ConflationLib
         {
             get
             {
-                return Math.Round(((double)KeyPointNumber) / (Math.Min(BendsNumber1, BendsNumber2)) * 100);
+                return Math.Min(100, Math.Round(((double)KeyPointNumber) / (Math.Min(BendsNumber1, BendsNumber2)) * 100,0));
             }
         }
         public override string ToString()

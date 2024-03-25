@@ -22,8 +22,12 @@
         public Relation ()
         { 
         }
+        public override string ToString()
+        {
+            return $" {Id} ;{Persent};";
+        }
     }
-    public class Rate
+    public class Rate:IComparable<Rate>
     {
         public int Id1 { get; set; } = 0;
         public int Id2 { get; set; } = 0;
@@ -33,6 +37,16 @@
             Id1 = id;
             Id2 = id2;
             Persent = persent;
+        }
+        public override string ToString()
+        {
+            return $"{Id1}; {Id2} ;{Persent}; ";
+        }
+        public int CompareTo(Rate? other)
+        {
+            if(other == null) return 1;
+            if(other.Id1 != Id1) return Id1.CompareTo(other.Id1);
+            return Persent.CompareTo(other.Persent);
         }
     }
 }
