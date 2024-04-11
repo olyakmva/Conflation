@@ -9,8 +9,9 @@ using DotSpatial.Data;
 using SupportLib;
 
 
-var dataPath1 = "C:\\Users\\Есения\\OneDrive\\Рабочий стол\\500";
-var dataPath2 = "C:\\Users\\Есения\\OneDrive\\Рабочий стол\\1000";
+var dataPath1 = "500";
+var dataPath2 = "1000";
+
 DirectoryInfo dir1 = new DirectoryInfo(dataPath1);
 DirectoryInfo dir2 = new DirectoryInfo(dataPath2);
 var dataFiles1 = dir1.GetFiles("*.shp");

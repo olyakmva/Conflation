@@ -1,7 +1,5 @@
 ﻿using DotSpatial.Data;
 using NetTopologySuite.Geometries;
-using System.Text;
-
 
 namespace SupportLib
 {
@@ -41,18 +39,24 @@ namespace SupportLib
             foreach (var item in list)
             {
                 var shape = item.ToShape();
-
-                int fid = Convert.ToInt32(shape.Attributes[0]);
-                string name = shape.Attributes[2].ToString() ?? string.Empty;
-
+                int fid = 0;
+                if (item.FeatureType == FeatureType.Polygon)
+                {
+                    fid = item.Fid;
+                }
+                else
+                {
+                    fid = Convert.ToInt32(shape.Attributes[0]);
+                    string name = shape.Attributes[2].ToString() ?? string.Empty;
+                    map.MapObjNameDictionary.Add(fid, name);
+                }
                 var points = new List<MapPoint>();
                 for(var t=0; t< shape.Vertices.Length;t+=2)
                 {
                     var p = new MapPoint(shape.Vertices[t], shape.Vertices[t+1], fid, 1.0);
                     points.Add(p);
                 }
-                map.MapObjDictionary.Add(fid, points);
-                map.MapObjNameDictionary.Add(fid, name);
+                map.MapObjDictionary.Add(fid, points);       
             }
             return map;
         }
