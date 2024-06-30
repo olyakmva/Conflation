@@ -30,13 +30,19 @@ namespace AlgorithmsLibrary
             Options.OutParam = Options.Tolerance;
         }
 
+        public virtual void Run(List<MapPoint> chain)
+        {
+            int end = chain.Count-1;
+            Run(chain, 0, ref end);
+        }
+
         /// <summary>
         /// генерализация с помощью алгоритма Дугласа-Пейкера
         /// </summary>
         /// <param name="chain"> список точек ломаной</param>
         /// <param name="startIndex">индекс начальной точки</param>
         /// <param name="endIndex">индекс последней точки </param>
-        protected virtual void Run(List<MapPoint> chain, int startIndex, ref int endIndex)
+        public virtual void Run(List<MapPoint> chain, int startIndex, ref int endIndex)
         {
             double tolerance = Options.Tolerance;
             const int weightUnremovingVertex = 100;

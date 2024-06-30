@@ -191,7 +191,11 @@ namespace AlgorithmsLibrary
             }
         }
 
-        
+        public void Run(List<MapPoint> vertices)
+        {
+            int endIndx= vertices.Count-1;
+            Run(vertices, 0, ref endIndx);
+        }
 
         public virtual void Run(MapData map)
         {

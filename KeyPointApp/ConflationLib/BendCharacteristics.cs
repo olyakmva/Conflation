@@ -11,7 +11,12 @@ namespace ConflationLib
         private readonly double _lengthBetweenPoints;
               
         public List<ObjAccordance> objAccordanceList = new();
-        public Dictionary<(int, int), List<MapKeyPoint>> result = new Dictionary<(int, int), List<MapKeyPoint>>(); 
+        public Dictionary<(int, int), List<MapKeyPoint>> result = new Dictionary<(int, int),List<MapKeyPoint>>();
+
+        public BendCharacteristics()
+        {
+
+        }
         public BendCharacteristics(MapData mapA, MapData mapB, double length)
         {
             _mapData1 = mapA;
@@ -20,6 +25,8 @@ namespace ConflationLib
         }
         public void Run()
         {
+            if(_mapData1 == null || _mapData2 == null)
+                return;
             var bendProps1 = GetBendsCharacteristics(_mapData1);
             var bendProps2 = GetBendsCharacteristics(_mapData2);
             foreach (var pv1 in bendProps1)
@@ -94,7 +101,8 @@ namespace ConflationLib
                         PointsList = b.PointsList,
                         PeakPoint = b.PointsList[peakIndx],
                         Orientation = Orientation(b.PointsList[0], b.PointsList[1], b.PointsList[2]),
-                        Area = Math.Round(b.Area(), 2)
+                        Area = Math.Round(b.Area(), 2),
+                        Height = b.GetHeight()
                     };
                     bendPropsDictionary[obj.Key].Add(bendProps);
                     
@@ -104,7 +112,7 @@ namespace ConflationLib
         }
         public void Save(string filename)
         {
-            using (var sw = new StreamWriter(filename, true, Encoding.GetEncoding(1251)))
+            using (var sw = new StreamWriter(filename, false,Encoding.GetEncoding(1251)))
             {
                 sw.WriteLine("Accordance;");
                 sw.WriteLine("Map1ObjId;Map2ObjId;AccordanceCoef;Name1;Name2;");
@@ -131,6 +139,7 @@ namespace ConflationLib
 
         public void ExtractBend(ref int index, List<MapPoint> chain, out Bend b)
         {
+            const double AngleCosReject = 0.95;
             int firstIndex = index;
             b = new Bend();
             b.PointsList.Add(chain[index]);
@@ -149,25 +158,25 @@ namespace ConflationLib
                 b.PointsList.Add(chain[index]);
                 index++;
             }
-            index--;
+            index-=2;
             //добавление крайних точек к изгибу при достаточно маленьком отклонении от 180 градусов и уменьшении ширины основания
             //к концу
-            while (index < chain.Count - 1)
-            {
-                if ((Angle(chain[index - 1], chain[index], chain[index + 1]) > 0.9)
-                    && (Math.Pow(b.BaseLineLength(), 2) <
-                        Math.Pow(chain[firstIndex].X - chain[index + 1].X, 2) +
-                        Math.Pow(chain[firstIndex].Y - chain[index + 1].Y, 2)))
-                {
-                    index++;
-                    b.PointsList.Add(chain[index]);
-                }
-                else
-                {
-                    break;
-                }
-            }
-            index--;
+            //while (index < chain.Count - 1)
+            //{
+            //    if ((Angle(chain[index - 1], chain[index], chain[index + 1]) > AngleCosReject)
+            //        && (Math.Pow(b.BaseLineLength(), 2) <
+            //            Math.Pow(chain[firstIndex].X - chain[index + 1].X, 2) +
+            //            Math.Pow(chain[firstIndex].Y - chain[index + 1].Y, 2)))
+            //    {
+            //        index++;
+            //        b.PointsList.Add(chain[index]);
+            //    }
+            //    else
+            //    {
+            //        break;
+            //    }
+            //}
+            //index--;
         }
         private bool Orientation(MapPoint u, MapPoint v, MapPoint w)
         {

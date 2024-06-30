@@ -86,10 +86,12 @@ namespace AlgorithmsLibrary
 
         private void SaveElementPosition(int position, HeapElement<TKey, TValue> element)
         {
-            if (_valuesPositions.ContainsKey(element.Value))
-            { ThrowValueNotUniqueException(); }
-            else
-            { _valuesPositions[element.Value] = position; }
+            //if (_valuesPositions.ContainsKey(element.Value))
+            //{ ThrowValueNotUniqueException(); }
+            //else
+            //{ 
+                _valuesPositions[element.Value] = position;
+            //}
         }
 
         [DebuggerStepThrough]

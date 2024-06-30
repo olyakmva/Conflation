@@ -10,22 +10,7 @@ namespace KeyPointApp.Controls
                 return double.Parse(distanceNumUpDown.Text);
             }
         }
-
-        public int PointDistance
-        {
-            get
-            {
-                return int.Parse(numericUpDown2.Text);
-            }
-        }
-        public double AngleGap
-        {
-            get
-            {
-                return double.Parse(angleNumericUpDown.Text); 
-            }
-        }
-       
+    
         public ParamControl()
         {
             InitializeComponent();

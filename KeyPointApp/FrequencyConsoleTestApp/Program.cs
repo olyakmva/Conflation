@@ -59,5 +59,5 @@ algm.Options = p;
 algm.Options.PointNumberGap = 2.0;
 var simplifyingMapData = inputMap.Clone();
 algm.Run(simplifyingMapData);
-
+//algm.Options.OutParam 
 Console.ReadKey();

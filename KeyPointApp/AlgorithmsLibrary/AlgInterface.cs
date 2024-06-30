@@ -12,6 +12,7 @@ namespace AlgorithmsLibrary
     {
         SimplificationAlgmParameters Options { get; set; }
         void Run(MapData map);
+        void Run(List<MapPoint> mapPoints);
     }
 
     public class SimplificationAlgmParameters

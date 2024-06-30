@@ -18,16 +18,28 @@ namespace AlgorithmsLibrary
             }
             Options.OutParam = Options.Tolerance;
         }
-
+        public void Run( List<MapPoint> chain)
+        {
+            Run(ref chain, 0, chain.Count-1);
+        }
         private void Run(ref List<MapPoint> chain, int startIndex,  int endIndex)
         {
+            
             if (endIndex - startIndex <= 2)
                 return;
             
             LinkedList< MapPoint> list = new LinkedList<MapPoint>(chain);
             var heap = CreateHeap(chain, startIndex, endIndex);
             Process(heap, list);
-            chain = list.ToList();
+            int notRemovableWeight = 100;
+            foreach(var point in  list) 
+            {
+                int index = chain.FindIndex(p => p == point);
+                if (index < 0)
+                    throw new ArgumentException("нет точки");
+                chain[index].Weight = notRemovableWeight;
+            }
+            chain.RemoveAll(p=>p.Weight!=notRemovableWeight);
         }
 
         protected virtual void Process(UniqueHeap<double, MapPoint> heap, LinkedList<MapPoint> list)
@@ -53,7 +65,7 @@ namespace AlgorithmsLibrary
         {
             IComparer<double> comparer = Comparer<double>.Default; 
             UniqueHeap<double, MapPoint> heap = new UniqueHeap<double, MapPoint>(comparer, endIndex - startIndex);
-
+            Random random = new Random();
             for (int i = startIndex + 1; i < endIndex; i++)
             {
                 var t = new Triangle(chain[i - 1], chain[i], chain[i + 1]);
@@ -73,7 +85,18 @@ namespace AlgorithmsLibrary
                     continue;
                 }
                 chain[i].Weight = s;
-                heap.Add(chain[i].Weight, chain[i]);
+                //try
+                //{
+                    heap.Add(chain[i].Weight, chain[i]);
+                //}
+                //catch(InvalidOperationException e)
+                //{
+                //    if(e.Message.Contains("not unique"))
+                //    {
+                //        chain[i].X += random.NextDouble();
+                //        heap.Add(chain[i].Weight , chain[i]);
+                //    }
+                //}
             }
             return heap;
         }
@@ -120,7 +143,6 @@ namespace AlgorithmsLibrary
                 else break;
             }
         }
-
     }
 
     public class VisWhyattAlgmWithPercent : VisWhyattAlgm
@@ -244,11 +266,6 @@ namespace AlgorithmsLibrary
                 _criterion.GetParamByCriterion(Options);
                 tempMap = map.Clone();
             }
-           
-            
         }
-
     }
-
-    
 }
