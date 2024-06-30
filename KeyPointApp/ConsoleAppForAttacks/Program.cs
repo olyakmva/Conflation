@@ -29,6 +29,7 @@ for (int j = 0; j < dataFiles1.Length; j++)
     Console.WriteLine(dataFiles2[j].Name);
     var compAlgm = new OnlyPolygonComparison();
     Console.WriteLine(compAlgm.AlgorithmForPolygon(inputMap1, inputMap2));
+    Console.WriteLine();
 }
 Console.ReadKey();
 
