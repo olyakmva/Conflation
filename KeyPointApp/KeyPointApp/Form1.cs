@@ -20,7 +20,7 @@ namespace KeyPointApp
         private readonly int startX = 0;
         private int startY = 10;
         private readonly int ctrlHeight = 135;
-        private int afterBtnProcY = 480;
+        private int afterBtnProcY = 560;
         private readonly int layerCtrlHeight = 45;
         private TableLayoutPanel table;
         public Dictionary<(int,int),List<MapKeyPoint>> keyPoints;
@@ -45,7 +45,7 @@ namespace KeyPointApp
             mainContainer.SplitterDistance  = paramControl.Width;
             lblFscore = new Label
             {
-                Location = new Point(startX, 285 + paramControl.Height),
+                Location = new Point(startX, 280 + paramControl.Height),
                 Text = "Fscore:",
                 Font = new Font("Arial", 12)
             };
@@ -394,7 +394,7 @@ namespace KeyPointApp
             _state.Scale = 2;
             Colors.Init();
             startY = 10;
-            afterBtnProcY = 480;
+            afterBtnProcY = 560;
             
             mainContainer.Panel1.Controls.Clear();
             mainContainer.Panel1.Controls.Add(btnProcess);
