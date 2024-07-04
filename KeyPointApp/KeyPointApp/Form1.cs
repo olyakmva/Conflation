@@ -5,7 +5,8 @@ using SupportLib;
 using ConflationLib;
 using KeyPointApp.Controls;
 using ComparisonLib;
-using System.Text;
+using DotSpatial.Projections;
+
 
 namespace KeyPointApp
 {
@@ -25,6 +26,7 @@ namespace KeyPointApp
         public Dictionary<(int,int),List<MapKeyPoint>> keyPoints;
         public Dictionary<int, List<BendProperty>> map2Vectors, map1Vectors;
         ParamControl paramControl;
+        Label lblFscore;
         public MainForm()
         {
             InitializeComponent();
@@ -41,34 +43,15 @@ namespace KeyPointApp
             };
             mainContainer.Panel1 .Controls .Add(paramControl);
             mainContainer.SplitterDistance  = paramControl.Width;
-            //InitTable();
-        }
-        private void InitTable()
-        {
-            table = new TableLayoutPanel
+            lblFscore = new Label
             {
-                RowCount = 1,
-                ColumnCount = 4,
-                Width = 250,
-                AutoSize = true,
-                CellBorderStyle = TableLayoutPanelCellBorderStyle.Single
+                Location = new Point(startX, 285 + paramControl.Height),
+                Text = "Fscore:",
+                Font = new Font("Arial", 12)
             };
-            table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20.0F));
-            table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20.0F));
-            table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20.0F));
-            ;
-            var lblId1 = new Label() { Text = "ID1" };
-            var lblId2 = new Label() { Text = "ID2" };
-            var lblDist = new Label() { Text = "KeyPNum" };
-
-            table.Controls.Add(lblId1, 0, 0);
-            table.Controls.Add(lblId2, 1, 0);
-            table.Controls.Add(lblDist, 2, 0);
-
-            table.Location = new Point(0, ctrlHeight * 5);
-            mainContainer.Panel1.Controls.Add(table);
+            mainContainer.Panel1.Controls.Add(lblFscore);
         }
-
+        
         private void OpenToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new()
@@ -177,6 +160,7 @@ namespace KeyPointApp
         private void BtnProcessClick(object sender, EventArgs e)
         {
             List<MapData> mapDatas = new();
+            bool IsFirst = true;
             foreach (var ctrl in _listCtrls)
             {
                 if (!ctrl.IsChecked)
@@ -185,7 +169,33 @@ namespace KeyPointApp
 
                 ISimplificationAlgm algm = ctrl.GetAlgorithm();
                 algm.Options.PointNumberGap = 2.0;
-                algm.Run(map);
+                //algm.Run(map);
+                if(IsFirst)
+                {
+                    IsFirst = false;
+                    var bendCharacterists = new BendCharacteristics();
+                    var dictionary = bendCharacterists.GetBendsCharacteristics(map);
+                    foreach (var pair in map.MapObjDictionary)
+                    {
+                        var pointsList = pair.Value;
+                        if (dictionary.ContainsKey(pair.Key))
+                        {
+                            var bends = dictionary[pair.Key];
+                            var heightList = (from b in bends select b.Height).ToList();
+                            heightList.Sort();
+                            //double aveHeight = bends.Average(b => b.Height);
+                            
+                            double median = heightList[1];
+                            algm.Options.Tolerance = median;
+                            algm.Run(pointsList);
+                        }
+                    }
+                }
+                else
+                {
+                    DoSimplification(algm, ref map);
+                }
+                
                 mapDatas.Add(map);
                 var layerName = $"{ctrl.LayerName}{ctrl.Name.Substring(0, 4)}";
                 var l = new Layer(map, layerName);
@@ -206,18 +216,39 @@ namespace KeyPointApp
                 bendCharacteristics.Run();
                 keyPoints = bendCharacteristics.result;
                 bendCharacteristics.Save("rate.txt");
-                
-                //var compAlgm = new ComparisionAlgorithm
-                //{
-                //    PointSimilarityMeasure = paramControl.PointDistance,
-                //    AngleSimilarityMeasure = paramControl.AngleGap
-                //};
-                //var result = compAlgm.InfringementDetectionAlgorithmForLine(mapDatas[0], mapDatas[1]);
-                //Save("rate.txt", result);
+                map1Vectors = bendCharacteristics.GetBendsCharacteristics(mapDatas[0]);
+                map2Vectors = bendCharacteristics.GetBendsCharacteristics(mapDatas[1]); 
+                //FscoreMetric fscore = new FscoreMetric();
+                //var result = fscore.GetFscore("real.txt", "rate.txt");
+                //lblFscore.Text += Math.Round(result.Item1*100, 1).ToString();
+
             }
             mapPictureBox.Invalidate();
 
         }
+
+        private void DoSimplification( ISimplificationAlgm algm , ref MapData map)
+        {
+            var bendCharacterists = new BendCharacteristics();
+            var dictionary = bendCharacterists.GetBendsCharacteristics(map);
+            foreach( var pair in  map.MapObjDictionary)
+            {
+                var pointsList = pair.Value;
+                if(dictionary.ContainsKey(pair.Key))
+                {
+                    var bends = dictionary[pair.Key];
+                    var heightList = (from b in bends select b.Height).ToList();
+                    heightList.Sort();
+                    if( heightList.Count>2)
+                    {
+                        algm.Options.Tolerance= (heightList[heightList.Count/2] + heightList[^1]) / 2; ;
+                    }
+                    else algm.Options.Tolerance = heightList[heightList.Count/2];
+                    algm.Run(pointsList);
+                }
+            }
+        }
+
         private void Save(string fileName, LineMapComparison res)
         {
             using var sw = new StreamWriter(fileName, true);
@@ -236,7 +267,14 @@ namespace KeyPointApp
                 var pen0 = new Pen(c, 1.75f);
                 Display(g, layer.MapData, pen0);
             }
- 
+            if (map1Vectors != null)
+            {
+                DrawBendPeaks(g, map1Vectors);
+            }
+            if(map2Vectors != null)
+            {
+                DrawBendPeaks(g, map2Vectors);
+            }
             if (keyPoints != null && keyPoints.Count > 0)
             {
                 var blackBrush = new SolidBrush(Color.Black);
@@ -253,33 +291,24 @@ namespace KeyPointApp
                     }
                 }
             }
+            
 
             g.Flush();
         }
 
-        //private void DisplayVectors(Graphics g, Dictionary<int, List<BendProperty>> map1Vectors, Pen pen)
-        //{
-
-        //    if (map1Vectors != null && map1Vectors.Count > 0)
-        //    {
-
-        //        foreach (var pair in map1Vectors)
-        //        {
-        //            var pointVectorList = pair.Value;
-        //            foreach (var item in pointVectorList)
-        //            {
-        //                var pt1 = _state.GetPoint(item.StartPoint, mapPictureBox.Height - 1);
-        //                var pointEnd = new MapPoint
-        //                {
-        //                    X = item.StartPoint.X + item.Vector.x,
-        //                    Y = item.StartPoint.Y + item.Vector.y
-        //                };
-        //                var pt2 = _state.GetPoint(pointEnd, mapPictureBox.Height - 1);
-        //                g.DrawLine(pen, pt1, pt2);
-        //            }
-        //        }
-        //    }
-        //}
+        private void DrawBendPeaks(Graphics g, Dictionary<int,List<BendProperty>> mapBends )
+        {
+            var greenBrush = new SolidBrush(Color.DarkGreen);
+            foreach (var pair in mapBends)
+            {
+                var bends = pair.Value;
+                foreach (var b in bends)
+                {
+                    var p = _state.GetPoint(b.PeakPoint, mapPictureBox.Height - 1);
+                    g.FillEllipse(greenBrush, (float)p.X, (float)p.Y, 4.0f, 4.0f);
+                }
+            }
+        }
 
         /// <summary>
         /// Отображение MapData md на графике g
@@ -366,8 +395,7 @@ namespace KeyPointApp
             Colors.Init();
             startY = 10;
             afterBtnProcY = 480;
-            //table.Controls.Clear();
-            // mainContainer.Panel1.Controls.Remove(table);
+            
             mainContainer.Panel1.Controls.Clear();
             mainContainer.Panel1.Controls.Add(btnProcess);
             paramControl = new ParamControl
@@ -376,7 +404,13 @@ namespace KeyPointApp
             };
             mainContainer.Panel1.Controls.Add(paramControl);
             mainContainer.SplitterDistance = paramControl.Width;
-            //InitTable();
+            lblFscore = new Label
+            {
+                Location = new Point(startX, 285 + paramControl.Height),
+                Text = "Fscore:",
+                Font = new Font("Arial", 12)
+            };
+            mainContainer.Panel1.Controls.Add(lblFscore);
             mapPictureBox.Invalidate();
         }
     }

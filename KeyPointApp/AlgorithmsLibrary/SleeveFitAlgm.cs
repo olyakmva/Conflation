@@ -1,5 +1,4 @@
 ﻿using SupportLib;
-using System.Collections.Generic;
 
 
 namespace AlgorithmsLibrary
@@ -12,11 +11,11 @@ namespace AlgorithmsLibrary
         {
             foreach (var pair in map.MapObjDictionary)
             {
-                Process(pair.Value);
+               Run(pair.Value);
             }
             Options.OutParam = Options.Tolerance;
         }
-        void Process(List<MapPoint> chain)
+        public void Run(List<MapPoint> chain)
         {
             var i = 0;
             while (i < chain.Count - 1)

@@ -37,7 +37,7 @@
 
             public override int GetHashCode()
             {
-                return (int)(X * 1000000 + Y);
+                return (int)(X * 1000000 + Y*100);
             }
         public double DistanceToVertex(MapPoint v)
         {

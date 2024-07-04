@@ -137,9 +137,17 @@ namespace ConflationLib
         /// <returns>высота</returns>
         public double GetHeight()
         {
-            var baseLine = new Line(PointsList[0], PointsList[PointsList.Count - 1]);
-            int peakIndex = PeakIndex();
-            return baseLine.GetDistance(PointsList[peakIndex]);
+            Line baseLine;
+            try
+            {
+                baseLine = new Line(PointsList[0], PointsList[PointsList.Count - 1]);
+                int peakIndex = PeakIndex();
+                return baseLine.GetDistance(PointsList[peakIndex]);
+            }
+            catch(LineCoefEqualsZeroException e)
+            {
+                return 0;
+            }
         }
         /// <summary>
         /// вычисление ширины изгиба
