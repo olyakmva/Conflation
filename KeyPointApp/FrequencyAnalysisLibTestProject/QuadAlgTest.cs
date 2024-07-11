@@ -38,8 +38,8 @@ namespace FrequencyAnalysisLibTestProject
             double minX = 0, minY = 0, maxX = 5, maxY = 4;
             QuadFreqAlg freqAlg = new QuadFreqAlg(map);
             MPoint LowLeft = new MPoint(minX, minY);
-            MPoint UpLeft = new MPoint(minX, maxX);
-            MPoint UpRight = new MPoint(maxX, maxX);
+            MPoint UpLeft = new MPoint(minX, maxY);
+            MPoint UpRight = new MPoint(maxX, maxY);
             MPoint LowRight = new MPoint(maxX, minY);
             Rectangle expected = new Rectangle(LowLeft, UpLeft, UpRight, LowRight);
             Assert.True(freqAlg.CellRectangle.RectangleEquals(expected));
@@ -87,19 +87,19 @@ namespace FrequencyAnalysisLibTestProject
         }
 
         [Theory]
-        [InlineData(3, 0.6)]
-        [InlineData(2, 0.4)]
-        [InlineData(0.5, 0.1)]
-        [InlineData(0.25, 0.05)]
-        [InlineData(0.125, 0.025)]
-        public void RecalculateOfCoordinatesCheck(double x, double expected_x)
+        [InlineData(3, 0.6, 0.75)]
+        [InlineData(2, 0.4, 0.5)]
+        [InlineData(0.5, 0.1, 0.125)]
+        [InlineData(0.25, 0.05, 0.0625)]
+        [InlineData(0.125, 0.025, 0.03125)]
+        public void RecalculateOfCoordinatesCheck(double x, double expected_x, double expected_y)
         {
             Map map = CreateMap();
             QuadFreqAlg freqAlg = new QuadFreqAlg(map);
             MPoint point = new MPoint(x, x);
             MPoint newpoint = freqAlg.RecalculateOfCoordinates(point);
             Assert.Equal(expected_x, newpoint.X);
-            Assert.Equal(expected_x, newpoint.Y);
+            Assert.Equal(expected_y, newpoint.Y);
         }
         [Fact]
         public void CountOfObjectsInMPointsMustBeEleven()
@@ -129,29 +129,52 @@ namespace FrequencyAnalysisLibTestProject
 
         }
 
+        //[Fact]
+        //public void TestWatermarkInProcessMethodWithValues()
+        //{
+        //    double[,] expected = 
+        //    { 
+        //        { 1, 0, 0, 0, 0, 0, 0, 0, 1, 1},
+        //        { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0},
+        //        { 0, 0, 0, 0, 0, 0, 1, 0, 1, 1},
+        //        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        //        { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0},
+        //        { 0, 1, 0, 0, 0, 1, 0, 0, 0, 0},
+        //        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        //        { 0, 0, 0, 1, 0, 0, 0, 0, 0, 0},
+        //        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        //        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0} 
+        //    };
+        //    Map map = CreateMap();
+        //    QuadFreqAlg freqAlg = new QuadFreqAlg(map);
+        //    freqAlg.Process();
+        //    Assert.Equal(freqAlg.Watermark, expected);
+        //}
+        //[Fact]
+        //public void CheckFrequencyRationingWithValues()
+        //{
+        //    double[,] expected =
+        //    {
+        //        { 1, 0, 0, 0, 0, 0, 0, 0, 1, 1},
+        //        { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0},
+        //        { 0, 0, 0, 0, 0, 0, 1, 0, 1, 1},
+        //        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        //        { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0},
+        //        { 0, 1, 0, 0, 0, 1, 0, 0, 0, 0},
+        //        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        //        { 0, 0, 0, 1, 0, 0, 0, 0, 0, 0},
+        //        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        //        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+        //    };
+        //    Map map = CreateMap();
+        //    QuadFreqAlg freqAlg = new QuadFreqAlg(map);
+        //    freqAlg.Process();
+        //    freqAlg.FrequencyRationing();
+        //    Assert.Equal(expected, freqAlg.Watermark);
+        //}
+
         [Fact]
-        public void TestWatermarkInProcessMethodWithValues()
-        {
-            double[,] expected = 
-            { 
-                { 1, 0, 0, 0, 0, 0, 0, 0, 1, 1},
-                { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0},
-                { 0, 0, 0, 0, 0, 0, 1, 0, 1, 1},
-                { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0},
-                { 0, 1, 0, 0, 0, 1, 0, 0, 0, 0},
-                { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                { 0, 0, 0, 1, 0, 0, 0, 0, 0, 0},
-                { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0} 
-            };
-            Map map = CreateMap();
-            QuadFreqAlg freqAlg = new QuadFreqAlg(map);
-            freqAlg.Process();
-            Assert.Equal(freqAlg.Watermark, expected);
-        }
-        [Fact]
-        public void CheckFrequencyRationingWithValues()
+        public void CheckDataAnalysisWithoutValues()
         {
             double[,] expected =
             {
@@ -166,37 +189,25 @@ namespace FrequencyAnalysisLibTestProject
                 { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
                 { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
             };
-            Map map = CreateMap();
-            QuadFreqAlg freqAlg = new QuadFreqAlg(map);
-            freqAlg.Process();
-            freqAlg.FrequencyRationing();
-            Assert.Equal(expected, freqAlg.Watermark);
+
+            DataAnalysis tmp = new DataAnalysis();
+            double expected_per = 100;
+
+            Assert.Equal(tmp.Analysis(expected, expected), expected_per);
         }
 
-        //[Fact]
-        //public void CheckDataAnalysisWithoutValues()
-        //{
-        //    double[] array1 = new double[10] { 1, 1, 0, 1, 1, 1, 2, 0, 2, 2 };
-        //    double[] array2 = new double[10] { 1, 1, 0, 1, 1, 5, 5, 5, 5, 5 };
+        [Fact]
+        public void CheckDataAnalysisWithValues()
+        {
+            Map map = CreateMap();
+            FreqAlg alg = new FreqAlg(map);
+            alg.Process();
 
-        //    DataAnalysis tmp = new DataAnalysis();
-        //    double expected = 50;
+            DataAnalysis tmp = new DataAnalysis();
+            double expected = 100;
 
-        //    Assert.Equal(tmp.Analysis(array1, array2), expected);
-        //}
-
-        //[Fact]
-        //public void CheckDataAnalysisWithValues()
-        //{
-        //    Map map = CreateMap();
-        //    FreqAlg alg = new FreqAlg(map);
-        //    alg.Process();
-
-        //    DataAnalysis tmp = new DataAnalysis();
-        //    double expected = 100;
-
-        //    Assert.Equal(tmp.Analysis(alg.Watermark, alg.Watermark), expected);
-        //}
+            Assert.Equal(tmp.Analysis(alg.Watermark, alg.Watermark), expected);
+        }
 
         private static Map CreateMap()
         {

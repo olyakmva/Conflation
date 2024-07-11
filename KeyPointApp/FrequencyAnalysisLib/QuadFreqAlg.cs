@@ -207,7 +207,6 @@ namespace FrequencyAnalysisLib
         //    return new Rectangle(LowLeft, UpLeft, UpRight, LowRight);
         //}
 
-
         private double[,] watermark;
         
         private List<Frequency> frequenciesX = new List<Frequency>();
@@ -291,10 +290,16 @@ namespace FrequencyAnalysisLib
             double xmin = m.Xmin; double xmax = m.Xmax;
             double ymin = m.Ymin; double ymax = m.Ymax;
             double distance = Math.Max(xmax - xmin, ymax - ymin);
+            //MPoint LowLeft = new MPoint(xmin, ymin);
+            //MPoint UpLeft = new MPoint(xmin, ymin+distance);
+            //MPoint UpRight = new MPoint(xmin+distance, ymin+distance);
+            //MPoint LowRight = new MPoint(xmin+distance, ymin);
+
             MPoint LowLeft = new MPoint(xmin, ymin);
-            MPoint UpLeft = new MPoint(xmin, distance);
-            MPoint UpRight = new MPoint(distance, distance);
-            MPoint LowRight = new MPoint(distance, ymin);
+            MPoint UpLeft = new MPoint(xmin, ymax);
+            MPoint UpRight = new MPoint(xmax, ymax);
+            MPoint LowRight = new MPoint(xmax, ymin);
+
             return new Rectangle(LowLeft, UpLeft, UpRight, LowRight);
         }
 
