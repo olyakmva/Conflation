@@ -18,16 +18,16 @@ inputMap = Converter.ToMapData(inputShape);
 mapDatas.Add(inputMap);
 ISimplificationAlgm[] algms = new ISimplificationAlgm[]
 {
-    //new DouglasPeuckerAlgm(),
+    new DouglasPeuckerAlgm(),
     //new SleeveFitAlgm(),
-    new VisWhyattAlgmWithTolerance()
+    //new VisWhyattAlgmWithTolerance()
 };
 
 Func<List<double>, double>[] funcs1 = new Func<List<double>, double>[3];
 funcs1[0] = new Func<List<double>, double>(GetMin);
 funcs1[1] = new Func<List<double>, double>(Median);
 funcs1[2] = new Func<List<double>, double>(FirstLast);
-
+string[] names1 = new string[] {  "min", "median", "ave1last" };
 
 
 Func<List<double>, double>[] funcs2 = new Func<List<double>, double>[4];
@@ -36,6 +36,7 @@ funcs2[1] = new Func<List<double>, double>(Median);
 funcs2[2] = new Func<List<double>, double>(DoubleMax);
 funcs2[3] = new Func<List<double>, double>(DoubleMedian);
 
+string[] names2 = new string[] { "max", "median", "max2","median2" };
 #region 
 
 //// запустить каждый алгоритм
@@ -58,8 +59,8 @@ funcs2[3] = new Func<List<double>, double>(DoubleMedian);
 //     new [] {1022588,3220780,10634603,28301575 }
 // };
 #endregion
-string description = "n;1000k_times;500k_times;algName;Fscore;TP;TN;FP;FN;";
-Save("res26_3.txt", description);
+//string description = "n;1000k_times;500k_times;algName;Fscore;TP;TN;FP;FN;";
+//Save("res26_3.txt", description);
 foreach (var algm in algms)
 {
     var bendCharacterists = new BendCharacteristics();
@@ -67,8 +68,7 @@ foreach (var algm in algms)
 
     algm.Options = new SimplificationAlgmParameters()
     {
-         PointNumberGap=2.0
-          
+         PointNumberGap=2.0         
     };
 
     for(int i=0; i< funcs1.Length; i++)
@@ -80,17 +80,17 @@ foreach (var algm in algms)
             if (dictionary.ContainsKey(pair.Key))
             {
                 var bends = dictionary[pair.Key];
-                var heightList = (from b in bends select b.Height).ToList();
-                heightList.Sort();
-                algm.Options.Tolerance = Math.Pow(funcs1[i](heightList),2)/2;
+                var paramList = (from b in bends select b.Height).ToList();
+                paramList.Sort();
+                algm.Options.Tolerance = funcs1[i](paramList);
                 algm.Run(pointsList);
-                string s = string.Format("id={0}  param = {1}", pair.Key, algm.Options.Tolerance);
-                //Console.WriteLine(s);
-                Save("resultVW.txt", s);
+                string s = string.Format("{0} {1}", pair.Key, algm.Options.Tolerance);
+                Console.WriteLine(s);
+                var file = names1[i] +".txt";
+                Save(file, s);
             }
         }
-        Save("resultVW.txt", "--------------------------");
-
+        
         var bendCharacterists2 = new BendCharacteristics();
         var dictionary2 = bendCharacterists2.GetBendsCharacteristics(mapDatas[1]);
         for (int j = 0; j < funcs2.Length; j++)
@@ -102,24 +102,24 @@ foreach (var algm in algms)
                 if (dictionary2.ContainsKey(pair.Key))
                 {
                     var bends = dictionary2[pair.Key];
-                    var heightList = (from b in bends select b.Height).ToList();
-                    heightList.Sort();
-                    algm.Options.Tolerance = Math.Pow(funcs2[j].Invoke(heightList),2)/2;
+                    var paramList = (from b in bends select b.Height).ToList();
+                    paramList.Sort();
+                    algm.Options.Tolerance = funcs2[j].Invoke(paramList);
                     algm.Run(pointsList);
-                    string s = string.Format("id={0}  param = {1}", pair.Key, algm.Options.Tolerance);
-                   // Console.WriteLine(s);
-                    Save("resultVW2.txt", s);
+                    string s = string.Format("{0} {1}", pair.Key, algm.Options.Tolerance);
+                    var file = names2[j] +i.ToString()+ ".txt";
+                    Save(file, s);
                 }
             }
-            Save("resultVW2.txt", "--------------------------");
+           
             // bends
             double maxDistanceBetweenPoints = 800.0;
             var bendCharacteristics = new BendCharacteristics(in1, in2, maxDistanceBetweenPoints);
             bendCharacteristics.Run();
-            bendCharacteristics.Save("rate.txt");
-            var f = GetFscore();
-            var s1 = string.Format("{0};{1};{2};{3};{4};{5};{6};", in1.Count, in2.Count, i,j, algm.ToString(), f.Item1, f.Item2);
-            Save("res26_3.txt", s1);
+            bendCharacteristics.Save("rate"+i+j+".txt");
+            //var f = GetFscore();
+            //var s1 = string.Format("{0};{1};{2};{3};{4};{5};{6};", in1.Count, in2.Count, i,j, algm.ToString(), Math.Round(f.Item1,2), f.Item2);
+            //Save("res26_3.txt", s1);
         } 
     }
 }
@@ -186,7 +186,7 @@ double DoubleMedian(List<double> values)
 (double,string)  GetFscore()
 {
     var realRate = GetFromFile("real.txt");
-    var accList = Get("rate.txt");
+    var accList = Get2("arcgis.txt");
     accList.Sort();
     
     var ids = (from t in accList select t.Id1).Distinct().ToList();
@@ -197,7 +197,7 @@ double DoubleMedian(List<double> values)
     //string diffId = string.Join(' ', diff);
     //Console.WriteLine(diffId);
     int truePositive = 0, trueNegative = 0, falsePositive = 0, falseNegative = 0;
-    int positiveLimit = 75, negativeLimit = 24, persentLimit = 20;
+    int positiveLimit = 75, negativeLimit = 30, persentLimit = 20;
     var nomatch = (from p in realRate where p.Id2 == -1 select p.Id1).ToList();
 
     foreach (var id in nomatch)
@@ -217,7 +217,7 @@ double DoubleMedian(List<double> values)
             else
             {
                 falsePositive++;
-                Save("fpos.txt", item.ToString());
+                //Save("fpos.txt", item.ToString());
             }
         }
         accList.RemoveAll(i => i.Id1 == id);
@@ -231,7 +231,7 @@ double DoubleMedian(List<double> values)
         if (items.Count == 0)
         {
             falseNegative++;
-            Save("noRelation.txt", info); continue;
+            //Save("fnegative.txt", info); continue;
         }
 
         var trueItem = items.FindAll(i => i.Id2 == rate.Id2).FirstOrDefault();
@@ -239,7 +239,7 @@ double DoubleMedian(List<double> values)
         {
             truePositive++;
             info += trueItem.ToString();
-            Save("true.txt", info);
+            //Save("truePos.txt", info);
         }
         accList.RemoveAll(i => i.Id1 == rate.Id1 && i.Id2 == rate.Id2);
     }
@@ -253,7 +253,7 @@ double DoubleMedian(List<double> values)
         else
         {
             falsePositive++;
-            Save("fpos.txt", item.ToString());
+            //Save("fpos.txt", item.ToString());
         }
     }
     string l = string.Format("{0};{1};{2};{3};", truePositive, trueNegative, falsePositive, falseNegative);

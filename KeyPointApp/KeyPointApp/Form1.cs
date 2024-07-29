@@ -184,9 +184,9 @@ namespace KeyPointApp
                             var heightList = (from b in bends select b.Height).ToList();
                             heightList.Sort();
                             //double aveHeight = bends.Average(b => b.Height);
-                            
-                            double median = heightList[1];
-                            algm.Options.Tolerance = median;
+                            if( heightList.Count >1)
+                                algm.Options.Tolerance = heightList[1];
+                            else algm.Options.Tolerance = heightList[0];
                             algm.Run(pointsList);
                         }
                     }
